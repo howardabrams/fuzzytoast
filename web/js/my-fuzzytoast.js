@@ -24,23 +24,23 @@
  *            	    $( '#your-button' ).click( function() { fuzzytoast('id-string'); } );
  */
 
-// The problem with this file is the size and complexity that it might achieve.
-// Options include breaking this up into separate files that could be $.getScript'd.
-// 
-// However, the indexed values into the `fuzzytoasts` map must be unique, and that
-// uniqueness isn't enforced in a dynamic "mapping" environment like this.
-// We could enforce this if we were to create a *file* for each index.
-//
-// Let's see what this would look like if we tried to make the controlling association
-// completely in this file.
+//The problem with this file is the size and complexity that it might achieve.
+//Options include breaking this up into separate files that could be $.getScript'd.
 
-// -----------------
-//   ABOUT
-// -----------------
+//However, the indexed values into the `fuzzytoasts` map must be unique, and that
+//uniqueness isn't enforced in a dynamic "mapping" environment like this.
+//We could enforce this if we were to create a *file* for each index.
+
+//Let's see what this would look like if we tried to make the controlling association
+//completely in this file.
+
+//-----------------
+//ABOUT
+//-----------------
 
 
 $(function() {
-    
+
     // ------------------
     //   INSTRUCTIONS
     // ------------------
@@ -49,7 +49,7 @@ $(function() {
     //   use the `.load()` method:
 
     $('#landing_link').click ( function() {
-	$('#main').load ('templates/instructions.html');
+        $('#main').load ('templates/instructions.html');
     });
 
     // -----------------
@@ -60,10 +60,10 @@ $(function() {
     //   `fuzzytoast()` method directly off of the selector (see the offline button below).
 
     $('#profile_link').click( function() {
-    	$.fuzzytoast({
-    	    template    : 'templates/users.html',
-    	    data        : 'data/user.json'
-    	});
+        $.fuzzytoast({
+            template    : 'templates/users.html',
+            data        : 'data/user.json'
+        });
     });
 
     // -----------------
@@ -74,34 +74,34 @@ $(function() {
     //   line. ;-)
 
     $.fuzzytoast.create( 'table-link', {
-	template    : 'templates/table.html',
-	data        : 'data/user.json',
-	method      : 'GET'
+        template    : 'templates/table.html',
+        data        : 'data/user.json',
+        method      : 'GET'
     });
 
     $('#table_link').fuzzytoast('table-link');
-    
+
     // ------------------
     //   OFFLINE
     // ------------------
-    
+
     $('#error_link').fuzzytoast ({
-	template: 'templates/offline.html',
-	data    : 'data/unavailable.json',
-	error   : access_error
+        template: 'templates/offline.html',
+        data    : 'data/unavailable.json',
+        error   : access_error
     });
-    
+
     // ------------------
     //   FILES
     // ------------------
-    
+
     $('#files_link').click ( function() {
-	$('#main').load ('templates/files.html').error(access_error);
+        $('#main').load ('templates/files.html').error(access_error);
     });
 
     // ------------------
     //   INITIAL LOAD
     // ------------------
-    
+
     $('#main').load ('templates/startup.html');
 });

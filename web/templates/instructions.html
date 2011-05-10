@@ -26,7 +26,7 @@ project.</p>
   <code>$.fuzzytoast.default_destination</code> (see below).
   </p></li>
   <li><p><code>method</code> - The HTTP method used when retrieving the
-  data. Defaults to <code>$.fuzzytoast.default_type</code> (see below).</p></li>
+  data. Defaults to <code>$.fuzzytoast.default_method</code> (see below).</p></li>
   <li><p><code>append</code> - Should the results be inserted as the only child of the
   destination (<code>false</code>) or <em>appended</em> to the end of
   the existing children (<code>true</code>).
@@ -51,7 +51,7 @@ include: </p>
     </p>
   </li>
   <li>
-    <p><code>$.fuzzytoast.default_type</code> - The HTTP method to
+    <p><code>$.fuzzytoast.default_method</code> - The HTTP method to
     use when retrieving the data from a web service. Defaults to
     <code>GET</code> (didn't see that coming, did you?)
     </p>
@@ -62,11 +62,6 @@ include: </p>
   </p>
   </li>
   <li>
-  <p><code>$.fuzzytoast.default_debug</code> - Specifies the extra
-  <code>console.log</code>ging features of the system. Defaults to <code>false</code>.
-  </p>
-  </li>
-  <li>
   <p><code>$.fuzzytoast.default_error</code> - A function name to
   be used for all <code>error</code> requests.
   </p>
@@ -74,6 +69,11 @@ include: </p>
   <li>
   <p><code>$.fuzzytoast.default_finished</code> - A function name to
   be used for all <code>finished</code> requests.
+  </p>
+  </li>
+  <li>
+  <p><code>$.fuzzytoast.debug</code> - Specifies the extra
+  <code>console.log</code>ging features of the system. Defaults to <code>false</code>.
   </p>
   </li>
 </ul>
