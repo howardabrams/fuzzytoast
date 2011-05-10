@@ -1,0 +1,25 @@
+<div class="note">
+	<p>
+		This demonstration initially requests the same
+		<i>sparsely-populated list</i> of
+		<a href="data/user.json">customer names and ID values</a>, but it
+		programmatically retrieves the additional customer data and fills
+		out the table with the downloaded results.
+	</p> 
+</div>
+
+<table class="name-table" cellspacing="0">
+  <tr class="table-header">
+    <th>Customer</th>
+    <th>Phone</th>
+    <th>Location</th>
+  </tr>
+  {{each(id,user) users}}
+  <tr id="${user.id}">
+    <td class="name"> ${user.name} </td>
+  </tr>
+  {{/each}}
+</table>
+
+<!-- Not sure I'm crazy about putting scripts in a template... -->
+<script type="text/javascript" src="js/my-table.js"></script>

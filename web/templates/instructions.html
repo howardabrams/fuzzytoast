@@ -1,0 +1,117 @@
+<p>The <strong>jQuery Fuzzytoast</strong> plugin aims to easily combine data from standard REST
+calls with "templates" and insert the results back into the HTML layout.</p>
+
+<p>This goal removes xSP processing from the server to the client, making
+the server work significantly more straight-forward and easier. However, 
+to help with the added complexity of the client, we've created this 
+project.</p>
+
+<h2>Usage</h2>
+
+<p>The easiest way to use this plugin is to place a <em>fuzzytoast</em> aspect on a button or some other object and have it grab an online template, some data from a REST call and <em>insert</em> it as the child of some element, as in:</p>
+
+<pre>$('#some-buttom').fuzzytoast ({ 
+    template: 'templates/about.html',
+    data    : 'rest/some-data.json' 
+});</pre>
+
+<p>This call makes many assumptions, but the <code>fuzzytoast</code> parameters are the following:</p>
+
+<ul>
+  <li><p><code>template</code> - The URL of the template to use</p></li>
+  <li><p><code>data</code> - The URL to a REST interface that responds with a data model used to
+  substitute in the template.</p></li>
+  <li><p><code>destination</code> - The jQuery selector to use when adding the results (as a child element).
+  If not specified, it defaults to
+  <code>$.fuzzytoast.default_destination</code> (see below).
+  </p></li>
+  <li><p><code>method</code> - The HTTP method used when retrieving the
+  data. Defaults to <code>$.fuzzytoast.default_type</code> (see below).</p></li>
+  <li><p><code>append</code> - Should the results be inserted as the only child of the
+  destination (<code>false</code>) or <em>appended</em> to the end of
+  the existing children (<code>true</code>).
+  Defaults to <code>$.fuzzytoast.default_append</code> (see below).
+  </p></li>
+  <li><p><code>finished</code> - A function to call after the template
+  and data have been inserted into the
+  document.  Defaults to
+  <code>$.fuzzytoast.default_finished</code> (see below).</p></li>
+  <li><p><code>error</code> - A function to call if either the template
+  or data could not be downloaded. Defaults to
+  <code>$.fuzzytoast.default_error</code> (see below).</p></li>
+</ul>
+
+<p>You can also set up defaults for all requests. These defaults
+include: </p>
+<ul>
+  <li>
+    <p><code>$.fuzzytoast.default_destination</code> - The jQuery
+    selector that references an HTML element where the results
+    will be place. Defaults to <code>#main</code>.
+    </p>
+  </li>
+  <li>
+    <p><code>$.fuzzytoast.default_type</code> - The HTTP method to
+    use when retrieving the data from a web service. Defaults to
+    <code>GET</code> (didn't see that coming, did you?)
+    </p>
+  </li>
+  <li>
+    <p><code>$.fuzzytoast.default_append</code> - Should the results
+  of the request be appended to the destination. Defaults to <code>false</code>
+  </p>
+  </li>
+  <li>
+  <p><code>$.fuzzytoast.default_debug</code> - Specifies the extra
+  <code>console.log</code>ging features of the system. Defaults to <code>false</code>.
+  </p>
+  </li>
+  <li>
+  <p><code>$.fuzzytoast.default_error</code> - A function name to
+  be used for all <code>error</code> requests.
+  </p>
+  </li>
+  <li>
+  <p><code>$.fuzzytoast.default_finished</code> - A function name to
+  be used for all <code>finished</code> requests.
+  </p>
+  </li>
+</ul>
+
+<h2>Utility Functions</h2>
+
+<p>Templates themselves may contain data that needs to call the fuzzytoast system, and in this case, you can build up the dynamic aspects by first creating the action, and then calling it, as in:</p>
+
+<pre>var id = $.fuzzytoast.create({
+    template    : 'templates/profile.html',
+    data        : 'data/user/'+$(this).attr('id')+'.json',
+    destination : '#main'
+});															
+$.fuzzytoast(id);</pre>
+
+<p>Or doing this with a single call to <code>$.fuzzytoast()</code> as in:</p>
+
+<pre>$.fuzzytoast({
+    template    : 'templates/profile.html',
+    data        : 'data/user/'+$(this).attr('id')+'.json',
+    destination : '#main'
+});</pre>
+
+<p>A couple of reasons why you would want to use the <em>utility function</em> form of <code>$.fuzzytoast()</code> instead of the initial <em>selector method</em> usage described above, e.g. <code>$('#selector').fuzzytoast()</code>:</p>
+
+<p>First, the <code>$(this)</code> is not available without being <em>inside</em> a function call.</p>
+
+<p>Second, you might want to kick off the call with something other than a <code>click</code>, as in:</p>
+
+<pre>$('#user-list li').
+    hover(
+        function() {
+            $(this).addClass('ui-state-hover'); 			
+            $.fuzzytoast({
+                    template    : 'templates/profile.html', 
+                    data        : 'data/user/'+$(this).attr('id')+'.json', 
+                    destination : '#main'					
+                });
+        },
+        function() { $(this).removeClass('ui-state-hover'); }	
+    );</pre>

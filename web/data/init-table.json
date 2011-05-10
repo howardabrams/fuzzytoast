@@ -1,0 +1,59 @@
+{
+	customers: [
+		 {
+			 name:		"Kenneth King",
+			 email:		"Kenneth.N.King@dodgit.com",
+			 phone:		"239-357-3470",
+			 street:	"3880 Sunburst Drive",
+			 city:		"Fort Myers",
+			 state:		"FL",
+			 zip:		"33905",
+			 birth:		"12/11/1942",
+			 website:	"AlphaDatabase.com"
+		 },
+		 {
+			 name:		"Virginia Lee",
+			 email:		"Virginia.J.Lee@pookmail.com",
+			 phone:		"972-359-0501",
+			 street:	"4993 Whispering Pines Circle",
+			 city:		"Allen",
+			 state:		"TX",
+			 zip:		"75002",
+			 birth:		"3/15/19832",
+			 website:	"CleaningBasics.com"
+		 },
+		 {
+			 name:		"Carole Hamrick",
+			 email:		"Carole.D.Hamrick@mailinator.com",
+			 phone:		"251-786-8788",
+			 street:	"3074 Joyce Street",
+			 city:		"Mobile",
+			 state:		"AL",
+			 zip:		"36602",
+			 birth:		"11/19/1968",
+			 website:	"AnimePrograms.com"
+		 },
+		 {
+			 name:    "Michael Reece",
+			 email: 	 "Michael.K.Reece@dodgit.com",
+			 phone: 	 "781-987-9591",
+			 street:  "3525 Hummingbird Way",
+			 city: 	 "Needham",
+			 state: 	 "MA",
+			 zip:	 "02192",
+			 birth:	 "8/28/1982",
+			 website: "ScrapBuilder.com"
+		 },
+		 {
+			 name:    "Myrtle Culver",
+			 email: 	 "Myrtle.H.Culver@spambob.com",
+			 phone: 	 "203-237-7007",
+			 street:  "493 Colony Street",
+			 city: 	 "Meriden",
+			 state: 	 "CT",
+			 zip:	 "06450",
+			 birth:	 "9/3/1968",
+			 website: "GuamGaming.com"
+		 }
+	]
+}

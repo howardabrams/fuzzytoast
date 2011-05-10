@@ -1,0 +1,143 @@
+body {
+    font-family: calibri, "lucida grande", arial, helvetica, sans-serif;
+    padding: 0px;
+    margin: 0px;
+    background-color: #eee;
+    color: #666;
+}
+#header {
+    font-size: 36px;
+    font-weight: bold;
+    color: #aaa;
+    padding: 12px;
+}
+#menu {
+    color: #aaa;
+    padding: 6px;
+    padding-left: 12px;
+    padding-bottom: 12px;
+}
+#state {
+    float: right;
+}
+#errorTemplate th {
+    text-align: left;
+}
+#side {
+    color: #aaa;
+    font-size: 11px;
+    float: left;
+    width: auto;
+    height: auto;
+    border: 2px solid #ccc;
+    padding: 12px;
+    margin: 12px;
+    font-weight: bold;
+}
+#main {
+    padding: 12px;
+    line-height: 200%;
+}
+#footer {
+    border-top: 2px solid #ccc;
+    font-size: 10px;
+    color: #aaa;
+    padding: 6px;
+    font-weight: bold;
+    clear: both;
+    text-align: center;
+}
+#footer a {
+	color: #444;
+	text-decoration: none;
+	border-bottom: 1px dotted;
+}
+
+#body-left {
+}
+#body-middle {
+    background-color: white;
+    max-width: 800px;
+    margin: 0  auto;
+    border-left: 2px solid #ccc;
+    border-right: 2px solid #ccc;
+    padding: 18px;
+}
+
+#body-right {
+}
+
+.note {
+	font-size: 13px;
+	padding: 8px;
+	margin: 8px;
+	line-height: 140%;
+}
+
+a {
+		color: #668;
+		text-decoration: none;
+		font-weight: bold;
+		border-bottom: 1px dotted;
+}
+
+a.top-button {
+    padding: .4em 1em .4em 20px;
+    text-decoration: none;
+    position: relative;
+}
+.top-button span.ui-icon {
+    margin: 0 5px 0 0;
+    position: absolute;
+    left: .2em;
+    top: 50%;
+    margin-top: -8px;
+}
+
+.table-header th {
+    padding: 6px;
+}
+.name-table td {
+	padding: 4px;
+    padding-left: 8px;
+}
+.name-table tr.alt {
+    background-color: #eee;
+}
+
+#user-list {
+	margin-left: 0;
+	line-height: 100%;
+}
+#user-list li {
+	margin: 2px;
+	padding: 2px;
+}
+#right {
+	margin-top: 40px;
+}
+
+#profile {
+	color: #666;
+	font-size: 12px;
+}
+#profile th {
+	text-align: right;
+	background-color: #ddd;
+	vertical-align: top;
+	padding: 4px;
+}
+#profile td {
+	padding-left: 12px;
+	vertical-align: top;
+}
+
+code {
+	font-size: 110%;
+}
+
+pre {
+	padding: 20px;
+	border: 1px solid #888;
+	font-size: 110%;
+}
