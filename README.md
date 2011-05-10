@@ -33,7 +33,7 @@ the following:
     `$.fuzzytoast.default_destination` (see below).
 
   * `method` - The HTTP method used when retrieving the data. Defaults
-    to `$.fuzzytoast.default_type` (see below).
+    to `$.fuzzytoast.default_method` (see below).
 
   * `append` - Should the results be inserted as the only child of the
     destination (`false`) or *appended* to the end of the existing
@@ -54,7 +54,7 @@ You can also set up defaults for all requests. These defaults include:
     references an HTML element where the results will be place. Defaults
     to `#main`.
 
-  * `$.fuzzytoast.default_type` - The HTTP method to use when retrieving
+  * `$.fuzzytoast.default_method` - The HTTP method to use when retrieving
     the data from a web service. Defaults to `GET` (didn’t see that
     coming, did you?)
 
