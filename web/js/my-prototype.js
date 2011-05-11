@@ -11,18 +11,12 @@ function online()
     $('#state b').text('Online');
 }
 
-function access_error(jqXHR, textStatus, errorThrown)
+function access_error( errorDetails )
 {
     $('#error-dialog').empty();
 
     $( "#errorTemplate" ).template( "errorTemplate" );
-    $.tmpl( "errorTemplate", {
-	textStatus: textStatus,
-	errorThrown: errorThrown,
-	readyState: jqXHR.readyState,
-	status: jqXHR.status,
-	statusText: jqXHR.statusText
-    } ).appendTo( "#error-dialog" );
+    $.tmpl( "errorTemplate", errorDetails ).appendTo( "#error-dialog" );
 
     $('#error-dialog').dialog('open');
 }
@@ -37,6 +31,7 @@ $(function() {
 
     // $.fuzzytoast.default_online  = online;
     // $.fuzzytoast.default_offline = offline;
+
     $.fuzzytoast.default_error   = access_error;
 
     // Error Dialog

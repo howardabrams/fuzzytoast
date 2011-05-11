@@ -115,3 +115,81 @@ $.fuzzytoast(id);</pre>
         },
         function() { $(this).removeClass('ui-state-hover'); }	
     );</pre>
+
+<h2>Handling Errors</h2>
+
+<p>
+Of course, you get errors... especially when dealing with a lot of
+downloaded files and web services. We've attempted to make this part
+simple.
+</p>
+<p>
+You can either add a <code>error</code> function reference to a link,
+or you can specify the function reference for all links by setting the
+<code>$.fuzzytoast.default_error</code> value.
+</p>
+<p>
+Assuming we have the following modal dialog template <i>embedded in
+our page</i> (instead of attempting to download it at run-time from
+our server):
+</p>
+<pre>&lt;script type="text/x-jquery-tmpl" id="errorTemplate"&gt;
+    The request we made to the web service returned an error.
+    &lt;table&gt;
+      &lt;tr&gt;
+	&lt;th align="left"&gt;Response:&lt;/th&gt;
+	&lt;td&gt;<b>${status}</b>&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+	&lt;th align="left"&gt;Request:&lt;/th&gt;
+	&lt;td&gt;<b>${url}</b>&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+&lt;/script&gt;</pre>
+<p>
+We could create the following error handler:
+</p>
+<pre>function access_error( errorDetails )
+{
+    $('#error-dialog').empty();
+
+    $( "#errorTemplate" ).template( "errorTemplate" );
+    $.tmpl( "errorTemplate", errorDetails ).appendTo( "#error-dialog" );
+
+    $('#error-dialog').dialog('open');
+}</pre>
+<p>
+Notice that the error handler is passed a <code>errorDetails</code> object that contains lots of different
+values about the error:
+</p>
+<ul>
+  <li>
+  <code>type</code>: The type of request that failed,
+  either "template" or "model".
+  </li>
+  <li>
+  <code>url</code>: The URL associated with the error. This might
+  either be the URL to the template or to the web service call
+  (depending on the <code>type</code>).
+  </li>
+  <li>
+  <code>link</code>: A reference to the fuzzytoast link associated
+  with the error. The <code>link.id</code> might be useful in
+  debugging the problem.
+  </li>
+  <li>
+  <code>status</code>: The HTTP error code, i.e. <code>404</code>.
+  </li>
+  <li>
+  <code>statusText</code>: The error text associated with the
+  error. This is usually just "error".
+  </li>
+  <li>
+  <code>jqXHR</code>: A reference to the
+  <a href="http://docs.jquery.com/Types#XMLHttpRequest">jQuery XMLHttpRequest</a> object.
+  </li>
+</ul>
+<p>
+Now we can associate the error handler with all errors, with:
+</p>
+<pre>$.fuzzytoast.default_error = access_error;</pre>

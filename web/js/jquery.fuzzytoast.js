@@ -73,6 +73,8 @@
             $.fuzzytoast.getdata(linkdata);
         }
         else {
+	    // Download the template, and on success, call the 'getdata' to
+	    // download the data from a web service.
             $.ajax({
                 url: linkdata.template,
                 dataType: 'text',
@@ -84,11 +86,9 @@
                     linkdata.templateData = templateData;
                     $.fuzzytoast.getdata(linkdata);
                 },
-                error: function( jqXHR, textStatus, errorThrown ) {
-                    if ( linkdata.error ) {
-                        linkdata.error( jqXHR, textStatus, errorThrown );
-                    }
-                }
+		error: function( jqXHR, textStatus, errorThrown ) {
+		    $.fuzzytoast.errorHandler('template', linkdata, jqXHR, textStatus, errorThrown);
+		}
             });
         }
     };
@@ -159,6 +159,10 @@
 
     $.fuzzytoast.getdata = function( linkdata ) {
 
+	// Download the data from a web service, and on success,
+	// call the 'process' to combine the template and results
+	// and insert back into the DOM.
+
         $.ajax({
             url: linkdata.data,
             type: linkdata.method,
@@ -182,11 +186,7 @@
                 $.fuzzytoast.process(linkdata);
             },
             error: function( jqXHR, textStatus, errorThrown ) {
-
-                // Call the associated error function.
-                if ( linkdata.error ) {
-                    linkdata.error( jqXHR, textStatus, errorThrown );
-                }
+		$.fuzzytoast.errorHandler('model', linkdata, jqXHR, textStatus, errorThrown);
             }
         });
     };
@@ -221,6 +221,38 @@
             linkdata.finished();
         }
     };
+
+    /**
+     * Called when an AJAX error happens. We build up a data object with details
+     * about the error, and then call the user's error handler.
+     */
+    $.fuzzytoast.errorHandler = function ( requestType, linkdata, jqXHR, textStatus, errorThrown ) {
+	var url;
+	switch (requestType) {
+	    case 'template':
+		url = linkdata.template;
+		break;
+	    case 'model':
+		url = linkdata.data;
+		break;
+	}
+
+	console.error("The '"+linkdata.id+"' request for the "+requestType+", "+url+", returned a "+jqXHR.status+"." );
+	console.error("jqXHR", jqXHR);
+
+        if ( linkdata.error ) {
+	    var errorDetails = {
+		type      : requestType,
+		url       : url
+		link      : linkdata,
+		status    : jqXHR.status,
+		statusText: jqXHR.statusText,
+		jqXHR     : jqXHR,
+	    };
+
+	    linkdata.error(errorDetails);
+        }
+    }
 
 })(jQuery);
 

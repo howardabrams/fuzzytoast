@@ -6,30 +6,25 @@
   <link type="text/css" href="css/my-prototype.css" rel="stylesheet"/>
   <link type="text/css" href="css/smoothness/jquery-ui-1.8.11.custom.css" rel="stylesheet"/>
 
-  <script type="text/javascript" src="js/json2.js"></script>
   <script type="text/javascript" src="js/jquery-1.6.min.js"></script>
   <script type="text/javascript" src="js/jquery-ui-1.8.11.custom.min.js"></script>
   <script type="text/javascript" src="js/jquery.tmpl.min.js"></script>
+
   <script type="text/javascript" src="js/jquery.fuzzytoast.js"></script>
   <script type="text/javascript" src="js/my-prototype.js"></script>
   <script type="text/javascript" src="js/my-fuzzytoast.js"></script>
   <script type="text/x-jquery-tmpl" id="errorTemplate">
     <p>
-    The <i>request</i> we made to our website server returned the
-    following error. This may be due to going offline.
+    The <i>request</i> we made to the web service returned an error.
     </p>
     <table>
       <tr>
-	<th align="left">Error</th>
-	<td>${textStatus}</td>
+	<th align="left">Response:</th>
+	<td>${status}</td>
       </tr>
       <tr>
-	<th align="left">Ready State</th>
-	<td>${readyState}</td>
-      </tr>
-      <tr>
-	<th align="left">Status</th>
-	<td>${status} ${statusText}</td>
+	<th align="left">Request:</th>
+	<td>${url}</td>
       </tr>
     </table>
   </script>
@@ -37,9 +32,11 @@
 <body>
   <div id="body-middle">
     <div id="header">The FuzzyToast Plugin for jQuery</div>
+    <!--
     <div id="state">
       State: <b>Online</b>
     </div>
+    -->
     <div id="menu">
       <a id="landing_link" class="top-button ui-state-default ui-corner-all">
         <span class="ui-icon ui-icon-home"></span>Instructions</a>

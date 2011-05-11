@@ -137,7 +137,7 @@ code {
 }
 
 pre {
-	padding: 20px;
+	line-height: 120%;
+	padding: 12px;
 	border: 1px solid #888;
-	font-size: 110%;
 }
