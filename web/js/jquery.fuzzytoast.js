@@ -48,27 +48,19 @@
         if ( typeof(idx) !== 'string' ) {
             id = $.fuzzytoast.create(idx);
         }
-
-        var linkdata = $.fuzzytoast.linkdata[id];
-        linkdata.id = id;
-        linkdata.parameters = parameters;
-
-        // TODO: Refactor this section so that function calls are objects
-        //       and objects can merge with "default" values more easily.
-
-        if ( ! linkdata.destination ) {
-            linkdata.destination = $.fuzzytoast.default_destination;
-        }
-        if ( ! linkdata.method ) {
-            linkdata.method = $.fuzzytoast.default_method;
-        }
-        if ( ! linkdata.append ) {
-            linkdata.append = $.fuzzytoast.default_append;
-        }
-        if ( ! linkdata.finished ) {
-            linkdata.finished = $.fuzzytoast.default_finished;
-        }
-
+        
+        // Allow option properties in the link (and passed in parameters)
+        // will override default values set elsewhere.
+        
+        var linkdata = $.extend({
+            id         : id,
+            destination: $.fuzzytoast.default_destination,
+            method     : $.fuzzytoast.default_method,
+            append     : $.fuzzytoast.default_append,
+            finished   : $.fuzzytoast.default_finished,
+            parameters : parameters
+        }, $.fuzzytoast.linkdata[id]);
+        
         if ( $.fuzzytoast.debug ) {
             console.log("Starting fuzzytoast request for "+ id);
         }
