@@ -1,27 +1,26 @@
-<div id="side">
-	<ul id="user-list">
-	{{each(id,user) users}}
-		<li id="${user.id}">
-			${user.name}
-		</li>
-	{{/each}}
-	</ul>
-</div>
-<div class="note">
-	<p>
-		This demonstration pulls up a <i>sparsely-populated list</i> of
-		just <a href="data/user.json">customer names and their ID values</a>.
-	</p>
-	<p>
-		Clicking any name requests additional information that is placed
-		in another section on this page. Clicking another name requests replaces
-		that information with the new customer data.
-	</p>
-	<p>
-		This shows how easy it is to add <i>dynamic information</i>
-		to a <i>dynalink</i>.
-	</p>
-</div>
+<div id="users">
+   <div id="side">
+      <ul id="user-list">
+         {{each(id,user) users}}
+         <li id="${user.id}">${user.name}</li> {{/each}}
+      </ul>
+   </div>
+   <div class="note">
+      <p>
+         This demonstration pulls up a <i>sparsely-populated list</i> of
+         just <a href="data/user.json">customer names and their ID
+            values</a>.
+      </p>
+      <p>Clicking any name requests additional information that is
+         placed in another section on this page. Clicking another name
+         requests replaces that information with the new customer data.
+      </p>
+      <p>
+         This shows how easy it is to add <i>dynamic information</i> to
+         a <i>dynalink</i>.
+      </p>
+   </div>
 
-<div id="right"></div>
-<script type="text/javascript" src="js/my-users.js"></script>
+   <div id="right"></div>
+   <script type="text/javascript" src="js/my-users.js"></script>
+</div>

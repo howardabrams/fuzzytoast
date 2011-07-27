@@ -1,23 +1,73 @@
-<p>I've been making web applications for 15 years, and while the technology has changed, I've noticed a pattern I see as being counter-productive and unnecessarily inefficient. </p>
+<div id="startup">
 
-<p>First, we grab some sort of server infrastructure and begin building <em>server pages</em> (call  it <em>xSP</em>, e.g. <a href="http://en.wikipedia.org/wiki/JavaServer_Pages">JSPs</a>, <a href="http://en.wikipedia.org/wiki/Active_Server_Pages">ASP</a>, <a href="http://en.wikipedia.org/wiki/Php">PHP</a> or even <a href="http://en.wikipedia.org/wiki/Ruby_on_rails">Ruby on Rails</a>). Regardless of the technology, the result is quite similar: A series of template files are combined with data on the server and fed to a stupid web browser as an HTML page.</p>
+<p>I've been making web applications for 15 years, and while the
+   technology has changed, I've noticed a pattern I see as being
+   counter-productive and unnecessarily inefficient.</p>
 
-<p>But our users have smart web browsers and expect a certain amount of dynamic interaction. So we begin to carve off chunks from our server pages and re-implement them with some <a href="http://en.wikipedia.org/wiki/Ajax_" title="programming">AJAX</a> wizardry and lots of hand-waving (thank the FSM for <a href="http://www.jquery.com">jQuery</a>, eh?). The end result is that we now have to maintain code in two places: JavaScript and our Server Page technology. </p>
+<p>
+   First, we grab some sort of server infrastructure and begin building
+   <em>server pages</em> (call it <em>xSP</em>, e.g. <a
+      href="http://en.wikipedia.org/wiki/JavaServer_Pages">JSPs</a>, <a
+      href="http://en.wikipedia.org/wiki/Active_Server_Pages">ASP</a>, <a
+      href="http://en.wikipedia.org/wiki/Php">PHP</a> or even <a
+      href="http://en.wikipedia.org/wiki/Ruby_on_rails">Ruby on
+      Rails</a>). Regardless of the technology, the result is quite similar:
+   A series of template files are combined with data on the server and
+   fed to a stupid web browser as an HTML page.
+</p>
 
-<p>If the end result is a dynamic, AJAX-laden web application (<a href="http://en.wikipedia.org/wiki/Rich_Internet_application">rich client</a>), why didn't we just begin with that path first and ignore the xSP bit altogether?</p>
+<p>
+   But our users have smart web browsers and expect a certain amount of
+   dynamic interaction. So we begin to carve off chunks from our server
+   pages and re-implement them with some <a
+      href="http://en.wikipedia.org/wiki/Ajax_" title="programming">AJAX</a>
+   wizardry and lots of hand-waving (thank the FSM for <a
+      href="http://www.jquery.com">jQuery</a>, eh?). The end result is
+   that we now have to maintain code in two places: JavaScript and our
+   Server Page technology.
+</p>
+
+<p>
+   If the end result is a dynamic, AJAX-laden web application (<a
+      href="http://en.wikipedia.org/wiki/Rich_Internet_application">rich
+      client</a>), why didn't we just begin with that path first and ignore
+   the xSP bit altogether?
+</p>
 
 <h2>Introducing the Fuzzy and the Toast</h2>
 
-<p>In making a dynamic web application, we need to deal with concrete bits, like sending a slice of bread to a web service and getting back buttered toast. This includes:</p>
+<p>In making a dynamic web application, we need to deal with
+   concrete bits, like sending a slice of bread to a web service and
+   getting back buttered toast. This includes:</p>
 
 <ul>
-<li>Data retrieved from web services</li>
-<li>Templates that describe how to display the data</li>
-<li>Static contents like images</li>
+   <li>Data retrieved from web services</li>
+   <li>Templates that describe how to display the data</li>
+   <li>Static contents like images</li>
 </ul>
 
-<p>But there is also a <em>fuzzy aspect</em> of how these <em>toast-like</em> results are inserted back into this dynamic application, and our goal is to have a plugin that can help with both the <em>fuzziness</em> and the <em>toastiness</em> of a modern, dynamically-interactive web application.</p>
+<p>
+   But there is also a <em>fuzzy aspect</em> of how these <em>toast-like</em>
+   results are inserted back into this dynamic application, and our goal
+   is to have a plugin that can help with both the <em>fuzziness</em>
+   and the <em>toastiness</em> of a modern, dynamically-interactive web
+   application.
+</p>
 
-<p>That is what the <a href="http://www.github/howardabrams/fuzzytoast"><code>jquery.fuzzytoast.js</code> plugin</a> is all about. Making it easy to grab a template from a web server, make a REST call for some data, combining it and inserting it back into the document. The plugin moves the xSP template processing from the server to the client, making the server development significantly more straight-forward and easier. </p>
+<p>
+   That is what the <a href="http://www.github/howardabrams/fuzzytoast"><code>jquery.fuzzytoast.js</code>
+      plugin</a> is all about. Making it easy to grab a template from a web
+   server, make a REST call for some data, combining it and inserting it
+   back into the document. The plugin moves the xSP template processing
+   from the server to the client, making the server development
+   significantly more straight-forward and easier.
+</p>
 
-<p>This <a href="http://www.fuzzytoast.com">demo application</a> is an example of how to use it. Everything on this <em>site</em> is dynamic and loaded as needed. You could actually drop the entire thing in an Apache web site and away you go. Note: The REST calls really just read static JSON files.</p>
+<p>
+   This <a href="http://www.fuzzytoast.com">demo application</a> is an
+   example of how to use it. Everything on this <em>site</em> is dynamic
+   and loaded as needed. You could actually drop the entire thing in an
+   Apache web site and away you go. Note: The REST calls really just
+   read static JSON files.
+</p>
+</div>
