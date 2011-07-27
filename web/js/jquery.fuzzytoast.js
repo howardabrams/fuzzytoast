@@ -243,16 +243,16 @@
         if ( linkdata.error ) {
 	    var errorDetails = {
 		type      : requestType,
-		url       : url
+		url       : url,
 		link      : linkdata,
 		status    : jqXHR.status,
 		statusText: jqXHR.statusText,
-		jqXHR     : jqXHR,
+		jqXHR     : jqXHR
 	    };
 
 	    linkdata.error(errorDetails);
         }
-    }
+    };
 
 })(jQuery);
 
