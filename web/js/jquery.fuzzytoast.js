@@ -68,23 +68,31 @@
         else {
             // Download the template, and on success, call the 'getdata' to
             // download the data from a web service.
-            $.ajax({
-                url : linkdata.template,
-                dataType : 'text',
-                success : function(templateData) {
-                    if ($.fuzzytoast.debug) {
-                        console.log("Retrieved '" + id + "' template: "
-                                + $.fuzzytoast.linkdata[id].template);
-                        console.log(templateData);
-                    }
-                    linkdata.templateData = templateData;
-                    $.fuzzytoast.getdata(linkdata);
-                },
-                error : function(jqXHR, textStatus, errorThrown) {
-                    $.fuzzytoast.errorHandler('template', linkdata, jqXHR,
-                            textStatus, errorThrown);
-                }
-            });
+          if( typeof linkdata.template === "string") { //assume it is a URL
+				$.ajax({
+					url : linkdata.template,
+					dataType : 'text',
+					success : function(templateData) {
+						if($.fuzzytoast.debug) {
+							console.log("Retrieved '" + id + "' template: " + $.fuzzytoast.linkdata[id].template);
+							console.log(templateData);
+						}
+						linkdata.templateData = templateData;
+						$.fuzzytoast.getdata(linkdata);
+					},
+					error : function(jqXHR, textStatus, errorThrown) {
+						$.fuzzytoast.errorHandler('template', linkdata, jqXHR, textStatus, errorThrown);
+					}
+				});
+			} else { //assume it is a jQuery object
+				if($.fuzzytoast.debug) {
+					console.log("Retrieved '" + id + "' template from jQuery object: " + $.fuzzytoast.linkdata[id].template);
+					console.log(templateData);
+				}
+				linkdata.templateData = $(linkdata.template).html();
+				//TODO: is this compatible with the above method? do we need an outerhtml method?
+				$.fuzzytoast.getdata(linkdata);
+			}
         }
     };
 
@@ -185,14 +193,21 @@
     $.fuzzytoast.process = function(linkdata) {
         // The template passed in could be either a string (which
         // works fine) or an HTML Object.
-
+		
+		var $destination;
+		if (typeof linkdata.destination === 'string') { //assume it is a selector
+			$destination = $(linkdata.destination);
+		} else{
+			$destination = linkdata.destination; //assume it is a jQuery object
+		} 
+		
         if ($.fuzzytoast.debug) {
-            console.log("Processing into ", linkdata.destination);
+            console.log("Processing into ", $destination);
         }
 
         // Clear out the destination section:
         if (!linkdata.append) {
-            $(linkdata.destination).empty();
+            $destination.empty();
         }
 
         // Create our template and assign it to the global template space.
@@ -207,7 +222,7 @@
         // appendTo()
 
         $.tmpl('fuzzytoast-template', linkdata.model).appendTo(
-                linkdata.destination);
+                $destination);
 
         if (linkdata.finished) {
             linkdata.finished();
