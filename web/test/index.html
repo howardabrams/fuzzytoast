@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>QUnit Tests</title>
+		<link rel="stylesheet" href="qunit/qunit.css" media="screen">
+		<!-- reference your own javascript files here -->
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+		<script type="text/javascript" src="../js/jquery-ui-1.8.11.custom.min.js"></script>
+		<script type="text/javascript" src="../js/jquery.tmpl.min.js"></script>
+		<script type="text/javascript" src="../js/jquery.fuzzytoast.js"></script>
+
+		<!-- test runner files -->
+		<script src="qunit/qunit.js"></script>
+		<script src="tests.js"></script>
+		<style>
+			#template {
+				display: none;
+			}
+		</style>
+	</head>
+	<body class="flora">
+		<h1 id="qunit-header">QUnit Test Suite</h1>
+		<h2 id="qunit-banner"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">
+			test markup
+		</div>
+		<div id="body-middle">
+			<div id="header">
+				The FuzzyToast Plugin for jQuery
+			</div>
+			<!--
+			<div id="state">
+			State: <b>Online</b>
+			</div>
+			-->
+			<div id="menu">
+				<a id="landing_link" class="top-button ui-state-default ui-corner-all"> <span class="ui-icon ui-icon-home"></span>Instructions</a>
+				<a id="profile_link" class="top-button ui-state-default ui-corner-all"> <span class="ui-icon ui-icon-person"></span>User Profiles</a>
+				<a id="table_link"   class="top-button ui-state-default ui-corner-all"> <span class="ui-icon ui-icon-calculator"></span>Table</a>
+				<a id="error_link"   class="top-button ui-state-default ui-corner-all"> <span class="ui-icon ui-icon-signal"></span>Error</a>
+				<a id="files_link" class="top-button ui-state-default ui-corner-all"> <span class="ui-icon ui-icon-newwin"></span>Files</a>
+			</div>
+			<div id="main"></div>
+			<div id="footer">
+				The FuzzyToast plugin for jQuery is licensed under the <a href="http://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt"> MIT License </a>
+				(<a href="http://en.wikipedia.org/wiki/MIT_License">More information</a>)
+			</div>
+		</div>
+		<div id="error-dialog" title="Access Error"></div>
+		<div id="target">
+			
+		</div>
+		<div id="template">
+			<div id="side">
+				<ul id="user-list">
+					{{each(id,user) users}}
+					<li id="${user.id}">
+						${user.name}
+					</li>
+					{{/each}}
+				</ul>
+			</div>
+			<div class="note">
+				<p>
+					This demonstration pulls up a <i>sparsely-populated list</i> of
+					just <a href="../data/user.json">customer names and their ID values</a>.
+				</p>
+				<p>
+					Clicking any name requests additional information that is placed
+					in another section on this page. Clicking another name requests replaces
+					that information with the new customer data.
+				</p>
+				<p>
+					This shows how easy it is to add <i>dynamic information</i>
+					to a <i>dynalink</i>.
+				</p>
+			</div>
+			<div id="right"></div>
+			<script type="text/javascript" src="../js/my-users.js"></script>
+		</div>
+	</body>
+</html>
