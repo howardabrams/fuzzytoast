@@ -1,12 +1,13 @@
 module("Fuzzytoast tests");
-
 asyncTest("Population from external template and external data", function() {
 	expect(1);
 	$.fuzzytoast({
+		destination : '#target',
 		template : '../templates/users.html',
 		data : '../data/user.json',
 		finished : function() {
-			ok(true, "Population from external template and external data passed");
+			var contentPopulated = $.trim($('#target').text()).length > 0;
+			ok(contentPopulated, "Population from external template and external data passed");
 			start();
 		},
 		error : function() {
@@ -19,10 +20,11 @@ asyncTest("Population from local HTML template and local data using a jquery obj
 	expect(1);
 	$.fuzzytoast({
 		template : $('#template'),
-		destination : $('#destination'),
+		destination : $('#target2'),
 		data : '../data/user.json',
 		finished : function() {
-			ok(true, "Population from local HTML template and data passed");
+			var contentPopulated = $.trim($('#target2').text()).length > 0;
+			ok(contentPopulated, "Population from local HTML template and data passed");
 			start();
 		},
 		error : function() {
