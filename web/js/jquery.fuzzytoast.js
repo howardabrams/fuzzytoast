@@ -168,7 +168,7 @@
             data : linkdata.parameters,
             success : function(data, textStatus, jqXHR) {
                 if ($.fuzzytoast.debug) {
-                    console.log("Retrieved '" + id + "' data: " + data);
+                    console.log("Retrieved data: " + data);
                 }
 
                 // Safari is stupid and can't seem to parse anything, so
@@ -179,6 +179,15 @@
                 }
                 else {
                     model = $.parseJSON(data);
+                }
+                // JQuery tmpl plugin will iterate all the templates if the json
+                // in an Array, you can't simplely use the each to iterate all
+                // the values, to makes it works for each, add a default wrapper
+                // 'data' outside of Array, that you can use ${{each(index, value) data}}
+                // for this case.
+                // JSON example: [ { name: 1 }, { name: 2} ]
+                if( model.length >= 0 ) {
+                    model = { data : model };
                 }
                 linkdata.model = model;
                 $.fuzzytoast.process(linkdata);
@@ -235,7 +244,7 @@
      */
     $.fuzzytoast.errorHandler = function(requestType, linkdata, jqXHR,
             textStatus, errorThrown) {
-        var url;
+        var url = "unknown";
         switch (requestType) {
         case 'template':
             url = linkdata.template;
