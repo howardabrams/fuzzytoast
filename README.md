@@ -114,3 +114,18 @@ Second, you might want to kick off the call with something other than a
             },
             function() { $(this).removeClass('ui-state-hover'); }   
         );
+
+JQuery tmpl plugin will iterate all the templates if the json in an Array, you
+can't simplely use the each to iterate all the values, to makes it works for each
+, add a default wrapper `data` outside of Array, that you can use
+
+    ${{each(index, value) data}}
+
+for this case.
+
+Example:
+
+    // if we have a json like: [ { name: 1 }, { name: 2} ]
+    {{each(i, obj) data}}
+      <p>{obj.name}</p>
+    {{/each}}
