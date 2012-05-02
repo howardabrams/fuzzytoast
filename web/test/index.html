@@ -13,9 +13,12 @@
 		<script src="qunit/qunit.js"></script>
 		<script src="tests.js"></script>
 		<style>
-			#template,#target,#target2,#body-middle {
+			#template2,#target,#target2,#body-middle,#target3,#target4 {
 				display: none;
 			}
+            .target, .template {
+                display: none;
+            }
 		</style>
 	</head>
 	<body class="flora">
@@ -50,13 +53,9 @@
 			</div>
 		</div>
 		<div id="error-dialog" title="Access Error"></div>
-		<div id="target">
-			
-		</div>
-		<div id="target2">
-			
-		</div>
-		<div id="template">
+		<div id="target" class="target"></div>
+		<div id="target2" class="target"></div>
+		<div id="template2" class="template">
 			<div id="side">
 				<ul id="user-list">
 					{{each(id,user) users}}
@@ -71,18 +70,15 @@
 					This demonstration pulls up a <i>sparsely-populated list</i> of
 					just <a href="../data/user.json">customer names and their ID values</a>.
 				</p>
-				<p>
-					Clicking any name requests additional information that is placed
-					in another section on this page. Clicking another name requests replaces
-					that information with the new customer data.
-				</p>
-				<p>
-					This shows how easy it is to add <i>dynamic information</i>
-					to a <i>dynalink</i>.
-				</p>
 			</div>
 			<div id="right"></div>
 			<script type="text/javascript" src="../js/my-users.js"></script>
 		</div>
+        <div id="target3" class="target"></div>
+        <div id="target4" class="target"></div>
+        <div id="template4" class="template">
+            <h2>Embedded Partial Template</h2>
+            {{INCLUDE templates/third.html}}
+        </div>
 	</body>
 </html>

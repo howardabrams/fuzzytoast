@@ -166,25 +166,19 @@ $.fuzzytoast(id);</pre>
 
    <p>
       A couple of reasons why you would want to use the <em>utility
-         function</em> form of
-      <code>$.fuzzytoast()</code>
+      function</em> form of <code>$.fuzzytoast()</code>
       instead of the initial <em>selector method</em> usage described
-      above, e.g.
-      <code>$('#selector').fuzzytoast()</code>
-      :
+      above, e.g. <code>$('#selector').fuzzytoast()</code>:
    </p>
 
    <p>
-      First, the
-      <code>$(this)</code>
+      First, the <code>$(this)</code>
       is not available without being <em>inside</em> a function call.
    </p>
 
    <p>
       Second, you might want to kick off the call with something other
-      than a
-      <code>click</code>
-      , as in:
+      than a <code>click</code>, as in:
    </p>
 
    <pre>$('#user-list li').
@@ -200,6 +194,46 @@ $.fuzzytoast(id);</pre>
         function() { $(this).removeClass('ui-state-hover'); }	
     );</pre>
 
+   <h2>Template Features</h2>
+   <p>
+     The template engine is based on jQuery's tmpl feature, but this will be
+     expanded in the future. We've extended the template feature to allow
+     <em>partial templates</em>, where a template can include the contents
+     of another template. 
+     
+     For instance, if <code>foo.html</code> contains:
+     </p>
+     <pre>&lt;h1&gt;Hello, {{user.name}}&lt;/h1&gt;
+&lt;div&gt;
+{{INCLUDE bar.html}}
+&lt;/div&gt;</pre>
+    <p>
+      And <code>bar.html</code> contains:
+    </p>
+     <pre>Books read:
+&lt;ul&gt;
+  {{each(book) user.books}}
+    &lt;li&gt; ${book.name} &lt;/li&gt;
+  {{/each}}
+&lt;/ul&gt;</pre>
+    <p>
+      The template that is processed with the model would look like this:
+    </p>
+     <pre>&lt;h1&gt;Hello, {{user.name}}&lt;/h1&gt;
+&lt;div&gt;
+Books read:
+&lt;ul&gt;
+  {{each(book) user.books}}
+    &lt;li&gt; ${book.name} &lt;/li&gt;
+  {{/each}}
+&lt;/ul&gt;
+&lt;/div&gt;</pre>
+    <p>
+      Included templates can include other templates.
+      Oh yeah, the <code>{{INCLUDE ...}}</code> must be in uppercase. Didn't
+      want to risk conflicts with the template engine.
+   </p>
+   
    <h2>Handling Errors</h2>
 
    <p>Of course, you get errors... especially when dealing with a

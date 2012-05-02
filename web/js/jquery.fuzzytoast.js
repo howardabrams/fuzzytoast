@@ -77,8 +77,10 @@
 							console.log("Retrieved '" + id + "' template: " + $.fuzzytoast.linkdata[id].template);
 							console.log(templateData);
 						}
-						linkdata.templateData = templateData;
-						$.fuzzytoast.getdata(linkdata);
+						$.fuzzytoast.templateProcess(templateData, function(completeTemplate){
+						    linkdata.templateData = completeTemplate;
+						    $.fuzzytoast.getdata(linkdata);
+						});
 					},
 					error : function(jqXHR, textStatus, errorThrown) {
 						$.fuzzytoast.errorHandler('template', linkdata, jqXHR, textStatus, errorThrown);
@@ -89,9 +91,11 @@
 					console.log("Retrieved '" + id + "' template from jQuery object: " + $.fuzzytoast.linkdata[id].template);
 					console.log(templateData);
 				}
-				linkdata.templateData = $(linkdata.template).html();
-				//TODO: is this compatible with the above method? do we need an outerhtml method?
-				$.fuzzytoast.getdata(linkdata);
+                $.fuzzytoast.templateProcess($(linkdata.template).html(), function(completeTemplate){
+                    linkdata.templateData = completeTemplate;
+                    //TODO: is this compatible with the above method? do we need an outerhtml method?
+                    $.fuzzytoast.getdata(linkdata);
+                });
 			}
         }
     };
@@ -154,6 +158,39 @@
     // -------------------------------------------------------------
     // Following functions are not intended to be called directly.
     // -------------------------------------------------------------
+
+    /**
+     * Once we have a template, we want to be able to include other templates
+     * in it. This allows us to reuse templates, so we parse the template data
+     * for keywords:  {{INCLUDE url}}
+     */
+    $.fuzzytoast.templateProcess = function( templateData, callback ) {
+        var match = $.fuzzytoast.templateIncludes.exec(templateData);
+        // console.log("templateProcess:", templateData, "match():", match);
+        if (match) {
+            if($.fuzzytoast.debug) {
+                console.log("Retrieving sub-template:", match[1]);
+            }
+            $.ajax({
+                url : match[1],
+                success : function( templateString ) {
+                    var newTemplate = 
+                        templateData.substring(0, match.index) +
+                        templateString +
+                        templateData.substring(match.index + match[0].length);
+                    $.fuzzytoast.templateProcess(newTemplate, callback);
+                },
+                error : function( err ) {
+                    console.log("Could not retrieve embedded template: ", err);
+                }
+            });
+        }
+        else {
+            callback(templateData);
+        }
+    };
+    $.fuzzytoast.templateIncludes = /\{\{\s*INCLUDE\s+(\S+)\s*\}\}/m;
+
 
     $.fuzzytoast.getdata = function(linkdata) {
 
