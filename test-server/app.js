@@ -3,10 +3,14 @@
  * Module dependencies.
  */
 
+var path = require('path');
 var express = require('express');
 var port    = 3000;
 
 var app = module.exports = express.createServer();
+
+var home = path.dirname(__dirname);
+var web  = path.join(home, 'web');
 
 // Configuration
 
@@ -14,7 +18,7 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
-  app.use(express.static(__dirname + '../web'));
+  app.use(express.static(web));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
