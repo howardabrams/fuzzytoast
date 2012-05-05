@@ -3,8 +3,10 @@
 	<head>
 		<title>QUnit Tests</title>
 		<link rel="stylesheet" href="qunit/qunit.css" media="screen">
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<script type="text/javascript" src="../js/libs/jquery.tmpl.min.js"></script>
+        <script type="text/javascript" src="../js/libs/mustache.js"></script>
+        <script type="text/javascript" src="../js/libs/handlebars.js"></script>
 		<script type="text/javascript" src="../js/jquery.fuzzytoast.js"></script>
 
 		<!-- test runner files -->
@@ -78,5 +80,7 @@
             <h2>Embedded Partial Template</h2>
             {{INCLUDE templates/third.html}}
         </div>
+        <div id="target5" class="target"></div>
+        <div id="target6" class="target"></div>
 	</body>
 </html>

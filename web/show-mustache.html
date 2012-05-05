@@ -1,0 +1,93 @@
+<html>
+<head>
+    <title>Showing Off: Mustache</title>
+    <link type="text/css" href="css/my-prototype.css" rel="stylesheet"/>
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css" type="text/css" rel="Stylesheet"/>
+    <style type="text/css">
+body {
+  background-color: white;
+  padding: 40px;
+}
+table#profile {
+    font-size: 18px;
+}
+#toolbar {
+  text-align: right;
+  float: right;
+}
+button .button {
+  font-size: 10px;
+}
+</style>
+</head>
+<body>
+  <div id="toolbar">
+    <button id="back"  class="button">Previous</button>
+    <button id="next"  class="button">Next</button>
+    <button id="close" class="button">Close</button>
+  </div>
+  <h1>Using Mustache</h1>
+  <div id="main"></div>
+  <div class="note">
+    <p>
+      This demonstration is displayed using the <a
+        href="https://github.com/janl/mustache.js"
+      >Mustache</a> template engine.
+    </p>
+  </div>
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="js/libs/mustache.js"></script>
+  <script type="text/javascript" src="js/jquery.fuzzytoast.js"></script>
+  <script type="text/javascript">
+    var userid = 0;
+    
+    $(function(){
+        $("#back").button({
+            label: "Back",
+            disabled:true,
+            icons: { primary:'ui-icon-circle-triangle-w' }
+        }).click(userBack);
+        $("#next").button({
+            icons: { secondary:'ui-icon-circle-triangle-e' }
+        }).click(userNext);
+        $("#close").button({
+            icons: { primary:'ui-icon-circle-close' }
+        }).click(function(){self.close()});
+    });
+    
+    function userBack() {
+        userid--;
+        $.fuzzytoast({
+            destination: '#main',
+            template: 'templates/users-mustache.html',
+            data: 'data/user/'+userid+'.json'
+        });
+        updateButtons();
+    }
+    function userNext() {
+        userid++;
+        $.fuzzytoast({
+            destination: '#main',
+            template: 'templates/users-mustache.html',
+            data: 'data/user/'+userid+'.json'
+        });
+        updateButtons();
+    }
+    
+    function updateButtons() {
+        if (userid < 2) {
+            $("#back").button("disable");
+        } else {
+            $("#back").button("enable");
+        }
+        if (userid > 48) {
+            $("#next").button("disable");
+        } else {
+            $("#next").button("enable");
+        }
+    }
+  </script>
+</body>
+</html>

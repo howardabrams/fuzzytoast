@@ -48,10 +48,11 @@
         var linkdata = $.extend({
             id : id,
             destination : $.fuzzytoast.default_destination,
-            method : $.fuzzytoast.default_method,
-            append : $.fuzzytoast.default_append,
-            finished : $.fuzzytoast.default_finished,
-            parameters : parameters
+            method      : $.fuzzytoast.default_method,
+            append      : $.fuzzytoast.default_append,
+            finished    : $.fuzzytoast.default_finished,
+            success     : $.fuzzytoast.default_success,
+            parameters  : parameters
         }, $.fuzzytoast.linkdata[id]);
 
         if ($.fuzzytoast.debug) {
@@ -77,7 +78,7 @@
 							console.log("Retrieved '" + id + "' template: " + $.fuzzytoast.linkdata[id].template);
 							console.log(templateData);
 						}
-						$.fuzzytoast.templateProcess(templateData, function(completeTemplate){
+						$.fuzzytoast.completeTemplate(templateData, function(completeTemplate){
 						    linkdata.templateData = completeTemplate;
 						    $.fuzzytoast.getdata(linkdata);
 						});
@@ -89,9 +90,8 @@
 			} else { //assume it is a jQuery object
 				if($.fuzzytoast.debug) {
 					console.log("Retrieved '" + id + "' template from jQuery object: " + $.fuzzytoast.linkdata[id].template);
-					console.log(templateData);
 				}
-                $.fuzzytoast.templateProcess($(linkdata.template).html(), function(completeTemplate){
+                $.fuzzytoast.completeTemplate($(linkdata.template).html(), function(completeTemplate){
                     linkdata.templateData = completeTemplate;
                     //TODO: is this compatible with the above method? do we need an outerhtml method?
                     $.fuzzytoast.getdata(linkdata);
@@ -155,6 +155,35 @@
         return id;
     };
 
+    /**
+     * Changes the template engine settings (instead of the default feature of
+     * auto discovery). The options specified by the `engine` variable must
+     * include a `type`, and one of the following:
+     * 
+     *  - `engine`: The name of the template engine. Only used in log messages.
+     *  - `type`: The type of template engine. See below for accepted values.
+     *  - `render`: Function that takes both template and data and returns results (e.g. HTML)
+     *  - `compiler`: Function that compiles the template into an intermediate form.
+     *  - `processor`: Function that takes the compiled template and the data. Currently, only used for the `global-variables` type.
+     *  
+     * The behavior for how the engine is called is based on its `type`:
+     * 
+     *  - `functional`: The approach uses the `render` function with both the template and the model at once, and returns the generated results, e.g. Mustache.
+     *  - `variable`: This approach uses the return value of the `compiler` as a function and passes the "data" to it for the output results, e.g. Handlebars.
+     *  - `global-storage`: This stores the results of the `compiler` in a global variable string and then calls the `processor` function, e.g. jQuery Templates.
+     */
+    $.fuzzytoast.setTemplateEngine = function(engine) {
+        if (typeof engine === 'string') {
+            discoverTemplateSetup(engine);
+        }
+        else if (engine.type) {
+            $.fuzzytoast.template = engine;
+        }
+        else {
+            throw "Unsupport template engine";
+        }
+    };
+
     // -------------------------------------------------------------
     // Following functions are not intended to be called directly.
     // -------------------------------------------------------------
@@ -164,9 +193,9 @@
      * in it. This allows us to reuse templates, so we parse the template data
      * for keywords:  {{INCLUDE url}}
      */
-    $.fuzzytoast.templateProcess = function( templateData, callback ) {
+    $.fuzzytoast.completeTemplate = function( templateData, callback ) {
         var match = $.fuzzytoast.templateIncludes.exec(templateData);
-        // console.log("templateProcess:", templateData, "match():", match);
+        // console.log("completeTemplate:", templateData, "match():", match);
         if (match) {
             if($.fuzzytoast.debug) {
                 console.log("Retrieving sub-template:", match[1]);
@@ -178,7 +207,7 @@
                         templateData.substring(0, match.index) +
                         templateString +
                         templateData.substring(match.index + match[0].length);
-                    $.fuzzytoast.templateProcess(newTemplate, callback);
+                    $.fuzzytoast.completeTemplate(newTemplate, callback);
                 },
                 error : function( err ) {
                     console.log("Could not retrieve embedded template: ", err);
@@ -256,20 +285,15 @@
             $destination.empty();
         }
 
-        // Create our template and assign it to the global template space.
-        $.template('fuzzytoast-template', linkdata.templateData);
-
+        var html = templateRender(linkdata.templateData, linkdata.model);
         if ($.fuzzytoast.debug) {
-            console.log($.tmpl('fuzzytoast-template', linkdata.model));
+            console.log( $.fuzzytoast.template.engine, html);
         }
-
-        // Call the template with the data model and add it to the destination
-        // Could use prependTo()
-        // appendTo()
-
-        $.tmpl('fuzzytoast-template', linkdata.model).appendTo(
-                $destination);
-
+        $destination.append(html);
+        
+        if (linkdata.success) {
+            linkdata.success();
+        }
         if (linkdata.finished) {
             linkdata.finished();
         }
@@ -308,8 +332,89 @@
 
             linkdata.error(errorDetails);
         }
+        
+        if (linkdata.finished) {
+            linkdata.finished();
+        }
     };
 
+    function templateRender(template_source, model) {
+        discoverTemplate();
+        
+        with ( $.fuzzytoast.template ) {
+            // A "functional" approach is the easiest, as this function takes 
+            // both the template and the model at once, and returns the 
+            // generated results.
+            if ( type === 'functional' ) {
+                return render(template_source, model);
+            }
+
+            // Global storage is obnoxious, because it isn't functional. We'll
+            // store all of our templates with the key: fuzzytoast-template
+            if ( type === 'global-storage' ) {
+                compiler('fuzzytoast-template', template_source);
+                return processor('fuzzytoast-template', model);
+            }
+
+            // The "variable" approach compiles the template and returns it.
+            // We then use that to process the "model"...
+            if ( type === 'variable' ) {
+                var template = compiler(template_source);
+                return template(model);
+            }
+        }
+    }
+
+    function discoverTemplate() {
+        if ( ! $.fuzzytoast.template ) {
+            // First preference: Handlebars
+            if (typeof Handlebars !== 'undefined') {
+                discoverTemplateSetup("Handlebars");
+            }
+            // Second preference: Mustache
+            else if (typeof Mustache !== 'undefined' ) {
+                discoverTemplateSetup("Mustache");
+            }
+            else if (typeof _ !== 'undefined') {
+                discoverTemplateSetup("Underscore");
+            }
+            else {
+                discoverTemplateSetup("jQuery Templates");
+            }
+            console.log("Template setup: ", $.fuzzytoast.template.engine, "(",
+                    $.fuzzytoast.template.type, ")");
+        }
+    }
+    
+    function discoverTemplateSetup(type) {
+        $.fuzzytoast.template = {};
+
+        switch(type.substring(0,1).toLowerCase()) {
+            case "h":
+                $.fuzzytoast.template.engine    = "Handlebars";
+                $.fuzzytoast.template.type      = "variable";
+                $.fuzzytoast.template.compiler  = Handlebars.compile;
+                $.fuzzytoast.template.processor = null;
+                break;
+            case "m":
+                $.fuzzytoast.template.engine    = "Mustache";
+                $.fuzzytoast.template.type      = "functional";
+                $.fuzzytoast.template.render    = Mustache.render;
+                break;
+            case "_":
+            case "u":
+                $.fuzzytoast.template.engine    = "Underscore";
+                $.fuzzytoast.template.type      = "functional";
+                $.fuzzytoast.template.render    = _.template;
+                break;
+            default:
+                $.fuzzytoast.template.engine    = "jQuery Template";
+                $.fuzzytoast.template.type      = "global-storage";
+                $.fuzzytoast.template.compiler  = $.template;
+                $.fuzzytoast.template.processor = $.tmpl;
+                break;
+        }
+    }
 })(jQuery);
 
 /**

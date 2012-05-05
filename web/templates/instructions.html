@@ -72,9 +72,9 @@
       </li>
       <li><p>
             <code>finished</code>
-            - A function to call after the template and data have been
-            inserted into the document. Defaults to
-            <code>$.fuzzytoast.default_finished</code>
+            - A callback function called after the template and data have been
+            successfully inserted into the document. Defaults to
+            <code>$.fuzzytoast.default_success</code>
             (see below).
          </p>
       </li>
@@ -84,6 +84,13 @@
             not be downloaded. Defaults to
             <code>$.fuzzytoast.default_error</code>
             (see below).
+         </p>
+      </li>
+      <li><p>
+            <code>finished</code>
+            - A function called after either the <code>success</code> or
+            <code>error</code> callbacks. Defaults to
+            <code>$.fuzzytoast.default_finished</code>
          </p>
       </li>
    </ul>
@@ -116,10 +123,16 @@
          </p></li>
       <li>
          <p>
+            <code>$.fuzzytoast.default_success</code>
+            - A function name to be used for all
+            <em>successful</em>
+            requests.
+         </p></li>
+      <li>
+         <p>
             <code>$.fuzzytoast.default_error</code>
             - A function name to be used for all
-            <code>error</code>
-            requests.
+            requests that failed... for whatever reason.
          </p></li>
       <li>
          <p>
@@ -196,14 +209,30 @@ $.fuzzytoast(id);</pre>
 
    <h2>Template Features</h2>
    <p>
-     The template engine is based on jQuery's tmpl feature, but this will be
-     expanded in the future. We've extended the template feature to allow
+     While FuzzyToast needs a template engine, it doesn't supply one.
+     You use whatever system you want, by simply including
+     a system. For example:
+   </p>
+   <pre>&lt;script type="text/javascript" src="js/libs/mustache.js"&gt;&lt;/script&gt;</pre>
+   <p>     
+     If it is one of the ones listed below, FuzzyToast will recognize it, and use it:
+   <p>
+   <ul>
+     <li> <a href="https://github.com/janl/mustache.js" target="_new">Mustache</a> (see <a href="show-mustache.html" id="mustache-demo">demo</a>)</li>
+     <li> <a href="http://handlebarsjs.com/" target="_new">Handlebars</a>  (see <a href="show-handlebars.html" id="handlebars-demo">demo</a>)</li>
+     <li> <a href="http://api.jquery.com/category/plugins/templates/" target="_new">jQuery Templates</a> (this page is rendered using it)</li>
+     <li> <a href="http://documentcloud.github.com/underscore/#template" target="_new">Underscore's Templates</a> </li>
+   </ul>
+   <p>
+     Whatever template engine you use, we've added a feature to allow
      <em>partial templates</em>, where a template can include the contents
      of another template. 
      
-     For instance, if <code>foo.html</code> contains:
-     </p>
-     <pre>&lt;h1&gt;Hello, {{user.name}}&lt;/h1&gt;
+     For instance, if you were using jQuery Templates, and 
+     <code>foo.html</code>
+    contains:
+  </p>
+     <pre>&lt;h1&gt;Hello, ${user.name}&lt;/h1&gt;
 &lt;div&gt;
 {{INCLUDE bar.html}}
 &lt;/div&gt;</pre>
@@ -219,7 +248,7 @@ $.fuzzytoast(id);</pre>
     <p>
       The template that is processed with the model would look like this:
     </p>
-     <pre>&lt;h1&gt;Hello, {{user.name}}&lt;/h1&gt;
+     <pre>&lt;h1&gt;Hello, ${user.name}&lt;/h1&gt;
 &lt;div&gt;
 Books read:
 &lt;ul&gt;
@@ -234,6 +263,73 @@ Books read:
       want to risk conflicts with the template engine.
    </p>
    
+   <h2>Using Other Template Systems</h2>
+   <p>
+   We have chosen to support a few popular template engines, but you can
+   use others... 
+    (see <a href="http://howardabrams.com/presentations/?FuzzyToast-Templates">this presentation</a>)
+   you just have to tell us how to call it, by setting the
+   following variables:
+   </p>
+   <ul>
+     <li>
+       <code>$.fuzzytoast.template.engine</code> - (String)
+       The name of the template system. Used only in debug messages.
+     </li>
+     <li>
+       <code>$.fuzzytoast.template.type</code> - (String)
+       Tell us about the behavior of the system, by setting this variable
+       to one of the following:
+       <ul>
+          <li>
+            <code>functional</code> - 
+            This approach is the easiest (for us anyway), as this function takes 
+            both the template and the model at once, and returns the 
+            generated results.
+          </li> 
+          <li>
+            <code>global-storage</code> - 
+            Global storage is obnoxious, because it isn't functional. We'll
+            store all of our templates with the key: fuzzytoast-template
+          </li>
+          <li>
+            <code>variable</code> - 
+            The "variable" approach compiles the template and returns it.
+            We then use that to process the "model"...
+          </li> 
+       </ul>
+     </li>
+     <li>
+       <code>$.fuzzytoast.template.render</code> - (Function)
+       A single function that is given both the template and the data model.
+       The results from this function should be HTML, as this is what is
+       embedded back into the page. Mustache behaves this way.
+     </li>
+     <li>
+       <code>$.fuzzytoast.template.compiler</code> - (Function)
+       Called with just the template, and if the <code>type</code>
+       is "variable", then the output from this function should be
+       a function that can be given the data model for rendering.
+       Handlebars behaves this way.
+       <br/><br/>
+       If the <code>type</code> is "global-storage", then this function doesn't
+       return anything, but stores the compiled template in a global variable,
+       and we'll call the <code>processor</code> with the name of this variable.
+       jQuery's template system behaves this way.
+     </li>
+     <li>
+       <code>$.fuzzytoast.template.processor</code> - (Function)
+       Called only if <code>type</code> is set to "global-storage" in
+       order to process the data model through the compiled template.
+     </li>
+  </ul>
+  <p>
+    If you have a template system that doesn't behave in one of the ways listed
+    above, you can easily create your own <code>render()</code> function, and 
+    do the processing yourself. If Handlebars wasn't so damn cool, we probably
+    would have only supported that approach.
+  </p>
+  
    <h2>Handling Errors</h2>
 
    <p>Of course, you get errors... especially when dealing with a
@@ -301,3 +397,19 @@ Books read:
    </p>
    <pre>$.fuzzytoast.default_error = access_error;</pre>
 </div>
+<script type="text/javascript">
+$(function(){
+    var height = 350;
+    var width  = 700;
+    var windowStats = "height="+height+",width="+width+",resizable=yes";
+    
+   $("#mustache-demo").click(function(){
+       window.open("show-mustache.html", "demo", windowStats);
+       return false;
+   }); 
+   $("#handlebars-demo").click(function(){
+       window.open("show-handlebars.html", "demo", windowStats);
+       return false;
+   }); 
+});
+</script>
