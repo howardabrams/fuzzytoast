@@ -20,10 +20,10 @@
       child of some element, as in:
    </p>
 
-   <pre>$('#some-buttom').fuzzytoast ({ 
+   <pre><code>$('#some-buttom').fuzzytoast ({ 
     template: 'templates/about.html',
     data    : 'rest/some-data.json' 
-});</pre>
+});</code></pre>
 
    <p>
       This call makes many assumptions, but the
@@ -158,12 +158,12 @@
       fuzzytoast system, and in this case, you can build up the dynamic
       aspects by first creating the action, and then calling it, as in:</p>
 
-   <pre>var id = $.fuzzytoast.create({
+   <pre><code>var id = $.fuzzytoast.create({
     template    : 'templates/profile.html',
     data        : 'data/user/'+$(this).attr('id')+'.json',
     destination : '#main'
 });															
-$.fuzzytoast(id);</pre>
+$.fuzzytoast(id);</code></pre>
 
    <p>
       Or doing this with a single call to
@@ -171,11 +171,11 @@ $.fuzzytoast(id);</pre>
       as in:
    </p>
 
-   <pre>$.fuzzytoast({
+   <pre><code>$.fuzzytoast({
     template    : 'templates/profile.html',
     data        : 'data/user/'+$(this).attr('id')+'.json',
     destination : '#main'
-});</pre>
+});</code></pre>
 
    <p>
       A couple of reasons why you would want to use the <em>utility
@@ -194,7 +194,7 @@ $.fuzzytoast(id);</pre>
       than a <code>click</code>, as in:
    </p>
 
-   <pre>$('#user-list li').
+   <pre><code>$('#user-list li').
     hover(
         function() {
             $(this).addClass('ui-state-hover'); 			
@@ -205,7 +205,7 @@ $.fuzzytoast(id);</pre>
                 });
         },
         function() { $(this).removeClass('ui-state-hover'); }	
-    );</pre>
+    );</code></pre>
 
    <h2>Template Features</h2>
    <p>
@@ -213,7 +213,7 @@ $.fuzzytoast(id);</pre>
      You use whatever system you want, by simply including
      a system. For example:
    </p>
-   <pre>&lt;script type="text/javascript" src="js/libs/mustache.js"&gt;&lt;/script&gt;</pre>
+   <pre><code>&lt;script type="text/javascript" src="js/libs/mustache.js"&gt;&lt;/script&gt;</code></pre>
    <p>     
      If it is one of the ones listed below, FuzzyToast will recognize it, and use it:
    <p>
@@ -232,23 +232,23 @@ $.fuzzytoast(id);</pre>
      <code>foo.html</code>
     contains:
   </p>
-     <pre>&lt;h1&gt;Hello, ${user.name}&lt;/h1&gt;
+     <pre><code>&lt;h1&gt;Hello, ${user.name}&lt;/h1&gt;
 &lt;div&gt;
 {{INCLUDE bar.html}}
-&lt;/div&gt;</pre>
+&lt;/div&gt;</code></pre>
     <p>
       And <code>bar.html</code> contains:
     </p>
-     <pre>Books read:
+     <pre><code>Books read:
 &lt;ul&gt;
   {{each(book) user.books}}
     &lt;li&gt; ${book.name} &lt;/li&gt;
   {{/each}}
-&lt;/ul&gt;</pre>
+&lt;/ul&gt;</code></pre>
     <p>
       The template that is processed with the model would look like this:
     </p>
-     <pre>&lt;h1&gt;Hello, ${user.name}&lt;/h1&gt;
+     <pre><code>&lt;h1&gt;Hello, ${user.name}&lt;/h1&gt;
 &lt;div&gt;
 Books read:
 &lt;ul&gt;
@@ -256,7 +256,7 @@ Books read:
     &lt;li&gt; ${book.name} &lt;/li&gt;
   {{/each}}
 &lt;/ul&gt;
-&lt;/div&gt;</pre>
+&lt;/div&gt;</code></pre>
     <p>
       Included templates can include other templates.
       Oh yeah, the <code>{{INCLUDE ...}}</code> must be in uppercase. Didn't
@@ -348,7 +348,7 @@ Books read:
          in our page</i> (instead of attempting to download it at run-time
       from our server):
    </p>
-   <pre>&lt;script type="text/x-jquery-tmpl" id="errorTemplate"&gt;
+   <pre><code>&lt;script type="text/x-jquery-tmpl" id="errorTemplate"&gt;
     The request we made to the web service returned an error.
     &lt;table&gt;
       &lt;tr&gt;
@@ -360,9 +360,9 @@ Books read:
 	&lt;td&gt;<b>${url}</b>&lt;/td&gt;
       &lt;/tr&gt;
     &lt;/table&gt;
-&lt;/script&gt;</pre>
+&lt;/script&gt;</code></pre>
    <p>We could create the following error handler:</p>
-   <pre>function access_error( errorDetails )
+   <pre><code>function access_error( errorDetails )
 {
     $('#error-dialog').empty();
 
@@ -370,7 +370,7 @@ Books read:
     $.tmpl( "errorTemplate", errorDetails ).appendTo( "#error-dialog" );
 
     $('#error-dialog').dialog('open');
-}</pre>
+}</code></pre>
    <p>
       Notice that the error handler is passed a
       <code>errorDetails</code>
@@ -395,7 +395,7 @@ Books read:
    </ul>
    <p>Now we can associate the error handler with all errors, with:
    </p>
-   <pre>$.fuzzytoast.default_error = access_error;</pre>
+   <pre><code>$.fuzzytoast.default_error = access_error;</code></pre>
 </div>
 <script type="text/javascript">
 $(function(){
@@ -410,6 +410,10 @@ $(function(){
    $("#handlebars-demo").click(function(){
        window.open("show-handlebars.html", "demo", windowStats);
        return false;
-   }); 
+   });
+   
+   $('pre code').each(function(i, e) {
+       hljs.highlightBlock(e, '    ');
+    });
 });
 </script>

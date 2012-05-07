@@ -1,15 +1,25 @@
 The **jQuery Fuzzytoast** plugin aims to easily combine data from
-standard REST calls with “templates” and insert the results back into
+standard REST calls with *templates* and insert the results back into
 the HTML layout.
 
 This goal removes xSP processing from the server to the client, making
 the server work significantly more straight-forward and easier. However,
-to help with the added complexity of the client, we’ve created this
+to help with the added complexity of the client, we've created this
 project.
 
 Usage
 =====
 
+Download a copy of the [`jquery.fuzzytoast.js`][1] code and include it in
+your HTML document *after* including `jquery` and your favorite template
+engine, as in:
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="js/libs/mustache.js"></script>
+    <script type="text/javascript" src="js/libs/jquery.fuzzytoast.js"></script>  
+
+  [1]: https://raw.github.com/howardabrams/fuzzytoast/master/web/js/jquery.fuzzytoast.js
+  
 The easiest way to use this plugin is to place a *fuzzytoast* aspect on
 a button or some other object and have it grab an online template, some
 data from a REST call and *insert* it as the child of some element, as
@@ -40,13 +50,16 @@ the following:
     children (`true`). Defaults to `$.fuzzytoast.default_append` (see
     below).
 
-  * `finished` - A function to call after the template and data have
-    been inserted into the document. Defaults to
-    `$.fuzzytoast.default_finished` (see below).
+  * `success` - A function called after the template and data have
+    successfully been inserted into the document. Defaults to
+    `$.fuzzytoast.default_success`.
 
   * `error` - A function to call if either the template or data could
     not be downloaded. Defaults to `$.fuzzytoast.default_error` (see
     below).
+
+  * `finished` - A function to called after all processing... even if there
+    was an error. Defaults to `$.fuzzytoast.default_finished` (see below).
 
 You can also set up defaults for all requests. These defaults include:
 
@@ -66,6 +79,9 @@ You can also set up defaults for all requests. These defaults include:
 
   * `$.fuzzytoast.default_error` - A function name to be used for all
     `error` requests.
+
+  * `$.fuzzytoast.default_success` - A function name to be used for all
+    successful requests.
 
   * `$.fuzzytoast.default_finished` - A function name to be used for all
     `finished` requests.
@@ -115,6 +131,9 @@ Second, you might want to kick off the call with something other than a
             function() { $(this).removeClass('ui-state-hover'); }   
         );
 
+We glo
+Depending on your choice of template engine (we support quite a few and you
+can extend FuzzyToast if we don't)
 JQuery tmpl plugin will iterate all the templates if the json in an Array, you
 can't simplely use the each to iterate all the values, to makes it works for each
 , add a default wrapper `data` outside of Array, that you can use
