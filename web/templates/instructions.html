@@ -11,6 +11,7 @@
       and easier. However, to help with the added complexity of the
       client, we've created this project.</p>
 
+    <a name="usage"></a>
    <h2>Usage</h2>
 
    <p>
@@ -207,6 +208,54 @@ $.fuzzytoast(id);</code></pre>
         function() { $(this).removeClass('ui-state-hover'); }	
     );</code></pre>
 
+  <a name="multiple-sources"></a>
+    <h2>Multiple Data Sources</h2>
+    <p>
+    The <code>data</code> parameter can either be a string containing the URL to access
+    for the data, or an <em>object containing multiple sources</em>. For example:
+    </p>
+   <pre><code>$.fuzzytoast({
+    template    : 'templates/dashboard.html',
+    data        : {
+                     'apps'    : '/apps/v1/details',
+                     'services': '/srvs/v1/details',
+                     'profile' : '/profile/' + id
+                  },
+    destination : '#main'
+});</code></pre>
+    <p>
+    In this example, the plugin will retrieve the JSON document from each of
+    the three URLs, and make them available to the template. Each JSON object
+    can then be referenced by the <em>key</em> given in the <code>data</code>.
+    For example:
+    </p>
+   <pre><code>{
+  'apps'    : [ { 'id':42, 'name':'mongrue' }, 
+                { 'id':34, 'name':'fuzzytoes' }
+              ],
+  'services': [ { 'id':3, 'name':'mongodb-1.8', 'type':'mongodb' },
+                { 'id':4, 'name':'redis-cep', 'type':'redis' } 
+              ],
+  'profile' : { 'name': 'Mickey Mouse', 
+                'email': 'gloves@disney.com'
+              }
+}</code></pre>
+    <p>
+      If you are using Mustache, your template could access that data in
+      this way:
+    </p>
+    <ul>
+      <li> <code>{{apps[1].name}}</code> </li> 
+      <li> <code>{{services[0].type}}</code> </li>
+      <li> <code>{{profile.email}}</code> </li>
+    </ul>
+    <p>
+    <b>Note:</b> If any of the data sources fail, then <code>error()</code>
+    callback function is called, and the <code>success()</code> function will
+    not... Even if two of the three succeed.
+    </p>
+    
+    <a name="templates"></a>
    <h2>Template Features</h2>
    <p>
      While FuzzyToast needs a template engine, it doesn't supply one.
@@ -223,6 +272,8 @@ $.fuzzytoast(id);</code></pre>
      <li> <a href="http://api.jquery.com/category/plugins/templates/" target="_new">jQuery Templates</a> (this page is rendered using it)</li>
      <li> <a href="http://documentcloud.github.com/underscore/#template" target="_new">Underscore's Templates</a> </li>
    </ul>
+
+  <a name="partial-templates"></a>
    <p>
      Whatever template engine you use, we've added a feature to allow
      <em>partial templates</em>, where a template can include the contents
