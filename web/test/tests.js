@@ -1,15 +1,18 @@
-$.fuzzytoast.debug = true;
+// $.fuzzytoast.debug = true;
 $.fuzzytoast.setTemplateEngine("jQuery");
 
 module("Global Fuzzytoast tests");
 asyncTest("Population from external template and external data", function() {
 	expect(1);
+    $.fuzzytoast.debug = false;
+    var target = "#target1";
+    
 	$.fuzzytoast({
-		destination : '#target',
+		destination : target,
 		template : '../templates/users.html',
 		data : '../data/user.json',
 		finished : function() {
-			var contentPopulated = $.trim($('#target').text()).length > 0;
+			var contentPopulated = $.trim($(target).text()).length > 0;
 			ok(contentPopulated, "Population from external template and external data passed");
 			start();
 		},
@@ -21,12 +24,15 @@ asyncTest("Population from external template and external data", function() {
 });
 asyncTest("Population from local HTML template and local data using a jquery object for destination", function() {
 	expect(1);
-	$.fuzzytoast({
+    $.fuzzytoast.debug = false;
+    var target = "#target2";
+    
+    $.fuzzytoast({
 		template : $('#template2'),
-		destination : $('#target2'),
+		destination : $(target),
 		data : '../data/user.json',
 		finished : function() {
-			var contentPopulated = $.trim($('#target2').text()).length > 0;
+			var contentPopulated = $.trim($(target).text()).length > 0;
 			ok(contentPopulated, "Population from local HTML template and data passed");
 			start();
 		},
@@ -41,32 +47,57 @@ asyncTest("Population from local HTML template and local data using a jquery obj
 module("Template Includes");
 asyncTest("single level includes", function(){
     expect(1);
-    var templateData = "abc {{INCLUDE templates/first.html}} " +
-    		           "def {{INCLUDE templates/second.html}} ghi";
-    $.fuzzytoast.completeTemplate( templateData, function(templateStr) {
-        equal("abc foo def bar ghi", templateStr);
-        start();
+    $.fuzzytoast.debug = false;
+    var target = '#target3';
+    
+    $.fuzzytoast({
+        template: 'templates/toplevel.html',
+        data: '../data/user/34.json',
+        destination: target,
+        success: function() {
+            var content = $.trim($(target).text());
+            equal(content, "abc foo def bar ghi");
+            start();
+        },
+        error : function() {
+            ok(false, "Population from external template and external data failed");
+            start();
+        }
     });
 });
 
 asyncTest("nested includes", function(){
     expect(1);
-    var templateData = "abc {{INCLUDE templates/third.html}} def";
-    $.fuzzytoast.completeTemplate( templateData, function(templateStr) {
-        equal("abc foo bazinga bar def", templateStr);
-        start();
+    $.fuzzytoast.debug = false;
+    var target = "#target4";
+    
+    $.fuzzytoast({
+        template: 'templates/toplevel2.html',
+        data: '../data/user/42.json',
+        destination: target,
+        success: function() {
+            var content = $.trim($(target).text());
+            equal(content, "abc foo bazinga bar def");
+            start();
+        },
+        error : function() {
+            ok(false, "Population from external template and external data failed");
+            start();
+        }
     });
 });
 
 asyncTest("Partial Templates Top-Level", function(){
     expect(1);
+    $.fuzzytoast.debug = false;
+    var target = "#target5";
+    
     $.fuzzytoast({
         template: 'templates/partial-top.html',
-        destination: '#target3',
+        destination: target,
         data : '../data/user.json',
         finished : function() {
-            var contentPopulated = $.trim($('#target3').text());
-            // console.log(contentPopulated);
+            var contentPopulated = $.trim($(target).text());
             equal("Partial Template foo bazinga bar", contentPopulated, "Population from external template and external data passed");
             start();
         },
@@ -79,13 +110,17 @@ asyncTest("Partial Templates Top-Level", function(){
 
 asyncTest("Embedded Partial Templates", function(){
     expect(1);
+    $.fuzzytoast.debug = true;
+    var target = "#target6";
+    
     $.fuzzytoast({
-        template: $("#template4"),
-        destination: '#target4',
-        data : '../data/user.json',
+        template: $("#template6"),
+        destination: target,
+        data : '../data/user/20.json',
         finished : function() {
-            var contentPopulated = $.trim($('#target4').text());
-            equal("Embedded Partial Template             foo bazinga bar", contentPopulated, "Population from external template and external data passed");
+            var content = $.trim($(target).text().replace(/\s+/g, ' '));
+            equal(content, "Embedded Partial Template foo bazinga bar", 
+                    "Population from external template and external data passed");
             start();
         },
         error : function() {
@@ -95,19 +130,23 @@ asyncTest("Embedded Partial Templates", function(){
     });
 });
 
+module("Alternate Template Engines");
+
 asyncTest("Mustache Templates", function(){
     expect(3);
+    $.fuzzytoast.debug = false;
+    var target = "#target7";
+
     $.fuzzytoast.setTemplateEngine("Mustache");
-    console.log("Engine:", $.fuzzytoast.template);
     equal($.fuzzytoast.template.engine, "Mustache");
     equal($.fuzzytoast.template.type,   "functional");
 
     $.fuzzytoast({
         template: 'templates/amustache.html',
-        destination: '#target5',
+        destination: target,
         data : '../data/user/9.json',
         success : function() {
-            var contentPopulated = $.trim($('#target5').text());
+            var contentPopulated = $.trim($(target).text());
             // console.log(contentPopulated);
             equal(contentPopulated, "Ernest Taylor", "Mustache template rendered correctly.");
             start();
@@ -121,8 +160,10 @@ asyncTest("Mustache Templates", function(){
 
 asyncTest("Handlebars Templates", function(){
     expect(3);
+    $.fuzzytoast.debug = false;
+    var target = "#target8";
+
     $.fuzzytoast.setTemplateEngine("Handlebars");
-    console.log("Engine:", $.fuzzytoast.template);
     equal($.fuzzytoast.template.engine, "Handlebars");
     equal($.fuzzytoast.template.type,   "variable");
 
@@ -132,10 +173,10 @@ asyncTest("Handlebars Templates", function(){
     
     $.fuzzytoast({
         template: 'templates/ahandlebar.html',
-        destination: '#target6',
+        destination: target,
         data : '../data/user/8.json',
         success : function() {
-            var contentPopulated = $.trim($('#target6').html());
+            var contentPopulated = $.trim($(target).html());
             // console.log(contentPopulated);
             equal(contentPopulated, "Thomas Dalton", "Handlebars template rendered correctly.");
             start();
@@ -147,3 +188,55 @@ asyncTest("Handlebars Templates", function(){
     });
 });
 
+module("Many Data Sources");
+
+asyncTest("Multiple Sources", function(){
+    expect(1);
+    $.fuzzytoast.debug = false;
+    $.fuzzytoast.setTemplateEngine("jQuery");
+    var target = "#target9";
+
+    $.fuzzytoast({
+        destination : target,
+        template : 'templates/manyusers.html',
+        data : {
+            userA: '../data/user/12.json', 
+            userB: '../data/user/13.json', 
+            userC: '../data/user/14.json' 
+        },
+        finished : function() {
+            var content = $.trim($(target).text().replace(/\s+/g, ' '));
+            equal(content, "Mabel Newman Wendy Storms Sanjuana Thompson", "Population from external template and external data passed");
+            start();
+        },
+        error : function() {
+            ok(false, "Population from external template and external data failed");
+            start();
+        }
+    });
+});
+
+asyncTest("Multiple Sources and one error", function(){
+    expect(1);
+    $.fuzzytoast.debug = false;
+    $.fuzzytoast.setTemplateEngine("jQuery");
+    var target = "#target10";
+
+    $.fuzzytoast({
+        destination : target,
+        template : 'templates/manyusers.html',
+        data : {
+            userA: '../data/user/12.json', 
+            userB: '../data/user/13.json', 
+            userC: '../data/user/71.json' 
+        },
+        success : function() {
+            ok(false, "Population from external template and external data failed");
+            start();
+        },
+        error : function() {
+            ok(true, "Expected an error on one data source.");
+            start();
+        }
+    });
+});

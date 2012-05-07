@@ -55,48 +55,46 @@
             parameters  : parameters
         }, $.fuzzytoast.linkdata[id]);
 
-        if ($.fuzzytoast.debug) {
-            console.log("Starting fuzzytoast request for " + id);
-        }
+        debug("Starting fuzzytoast request", id);
 
+        // Start work on gathering up the data sources
+        // while we start work on the getting the template.
+        linkdata.sourceCount = -1;
+        
+        getDataSources(linkdata);
+        
         // Currently, we are caching all templates in memory. This might be
         // too harsh for a large application. How should determine if we
         // should or shouldn't cache the template?
 
-        if (linkdata.templateData) {
-            $.fuzzytoast.getdata(linkdata);
-        }
-        else {
+        if (! linkdata.templateData) {
             // Download the template, and on success, call the 'getdata' to
             // download the data from a web service.
-          if( typeof linkdata.template === "string") { //assume it is a URL
-				$.ajax({
-					url : linkdata.template,
-					dataType : 'text',
-					success : function(templateData) {
-						if($.fuzzytoast.debug) {
-							console.log("Retrieved '" + id + "' template: " + $.fuzzytoast.linkdata[id].template);
-							console.log(templateData);
-						}
-						$.fuzzytoast.completeTemplate(templateData, function(completeTemplate){
-						    linkdata.templateData = completeTemplate;
-						    $.fuzzytoast.getdata(linkdata);
-						});
-					},
-					error : function(jqXHR, textStatus, errorThrown) {
-						$.fuzzytoast.errorHandler('template', linkdata, jqXHR, textStatus, errorThrown);
-					}
-				});
-			} else { //assume it is a jQuery object
-				if($.fuzzytoast.debug) {
-					console.log("Retrieved '" + id + "' template from jQuery object: " + $.fuzzytoast.linkdata[id].template);
-				}
-                $.fuzzytoast.completeTemplate($(linkdata.template).html(), function(completeTemplate){
+            if( typeof linkdata.template === "string") { //assume it is a URL
+                $.ajax({
+                    url : linkdata.template,
+                    dataType : 'text',
+                    success : function(templateData) {
+                        debug("Retrieved '", + id + "' template:", $.fuzzytoast.linkdata[id].template);
+                        // debug(templateData);
+                        processTemplate(templateData, function(completeTemplate){
+                            linkdata.templateData = completeTemplate;
+                            processDataAndTemplate(linkdata);
+                        });
+                    },
+                    error : function(jqXHR, textStatus, errorThrown) {
+                        $.fuzzytoast.errorHandler('template', linkdata, jqXHR, textStatus, errorThrown);
+                    }
+                });
+            }
+            else { //assume it is a jQuery object
+                debug("Retrieved '" + id + "' template from jQuery object:", $.fuzzytoast.linkdata[id].template);
+                processTemplate($(linkdata.template).html(), function(completeTemplate){
                     linkdata.templateData = completeTemplate;
                     //TODO: is this compatible with the above method? do we need an outerhtml method?
-                    $.fuzzytoast.getdata(linkdata);
+                    processDataAndTemplate(linkdata);
                 });
-			}
+            }
         }
     };
 
@@ -120,8 +118,10 @@
      */
     $.fuzzytoast.debug = false;
 
+    $.fuzzytoast.idCount = 0;
+    
     /**
-     * Predefine a fuzzytoast that will be referred to later by a uniqu
+     * Predefine a fuzzytoast that will be referred to later by a unique
      * identifier:
      * 
      * $.fuzzytoast.create( 'unique-id-value', { template:
@@ -141,9 +141,18 @@
 
         var id = idx;
 
+        // No ID is given, just parameters, so let's first create an ID
+        // based on idCount and the contents of the parameters:
         if (typeof (idx) !== 'string') {
             options = idx;
-            id = options.template + "-" + options.data;
+            id = ($.fuzzytoast.idCount++).toString();
+            
+            if (typeof options.template === 'string') {
+                id += "-" + options.template;
+            }
+            if (typeof options.data === 'string') {
+                id += "-" + options.data;
+            }
         }
 
         if ($.fuzzytoast.default_error && !options.error) {
@@ -184,6 +193,9 @@
         }
     };
 
+    // Sure, this regular expression could be overwritten:
+    $.fuzzytoast.templateIncludes = /\{\{\s*INCLUDE\s+(\S+)\s*\}\}/m;
+
     // -------------------------------------------------------------
     // Following functions are not intended to be called directly.
     // -------------------------------------------------------------
@@ -193,13 +205,11 @@
      * in it. This allows us to reuse templates, so we parse the template data
      * for keywords:  {{INCLUDE url}}
      */
-    $.fuzzytoast.completeTemplate = function( templateData, callback ) {
+    processTemplate = function( templateData, callback ) {
         var match = $.fuzzytoast.templateIncludes.exec(templateData);
         // console.log("completeTemplate:", templateData, "match():", match);
         if (match) {
-            if($.fuzzytoast.debug) {
-                console.log("Retrieving sub-template:", match[1]);
-            }
+            debug("Retrieving sub-template:", match[1]);
             $.ajax({
                 url : match[1],
                 success : function( templateString ) {
@@ -207,7 +217,7 @@
                         templateData.substring(0, match.index) +
                         templateString +
                         templateData.substring(match.index + match[0].length);
-                    $.fuzzytoast.completeTemplate(newTemplate, callback);
+                    processTemplate(newTemplate, callback);
                 },
                 error : function( err ) {
                     console.log("Could not retrieve embedded template: ", err);
@@ -218,24 +228,67 @@
             callback(templateData);
         }
     };
-    $.fuzzytoast.templateIncludes = /\{\{\s*INCLUDE\s+(\S+)\s*\}\}/m;
 
-
-    $.fuzzytoast.getdata = function(linkdata) {
-
+    /**
+     * Function called to retrieve the data sources specified in the `data`
+     * property. This can either be a single string to a single URL, or it
+     * can be an object containing multiple sources and the name used in 
+     * inserting the results back into the model, as in:
+     * 
+     *     data: {
+     *       user: '/user/45.json',
+     *       account: '/account/3.json'
+     *     }
+     * 
+     * Will result in a model containing some like this:
+     * 
+     *     {
+     *       'user': {
+     *         'first': 'Bob',
+     *         'last': 'Barker', //... More data from the REST call
+     *       },
+     *       'account': {
+     *         '
+     *       }
+     *     }
+     */
+    getDataSources = function(linkdata) {
+        if ( typeof linkdata.data === 'string' ) {
+            linkdata.sourceCount = 1;
+            getDataSource(linkdata, linkdata.data);
+        }
+        else {
+            linkdata.model = {};
+            linkdata.sourceCount = dataSourcesLength(linkdata.data);
+            for (i in linkdata.data) {
+                // debug("Asking for ", i, "in", linkdata.data[i], "Count", linkdata.sourceCount);
+                getDataSource(linkdata, linkdata.data[i], i);
+            }
+        }
+    };
+    
+    dataSourcesLength = function(obj){
+        var count = 0;
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                count++;
+            }
+        };
+        return count;
+    };
+    
+    getDataSource = function(linkdata, src, dataid) {
         // Download the data from a web service, and on success,
         // call the 'process' to combine the template and results
         // and insert back into the DOM.
 
         $.ajax({
-            url : linkdata.data,
+            url : src,
             type : linkdata.method,
             dataType : 'text',
             data : linkdata.parameters,
             success : function(data, textStatus, jqXHR) {
-                if ($.fuzzytoast.debug) {
-                    console.log("Retrieved data: " + data);
-                }
+                debug("Retrieved data: ", data);
 
                 // Safari is stupid and can't seem to parse anything, so
                 // we use this clever approach stolen from jQuery's source.
@@ -246,17 +299,25 @@
                 else {
                     model = $.parseJSON(data);
                 }
-                // JQuery tmpl plugin will iterate all the templates if the json
-                // in an Array, you can't simplely use the each to iterate all
-                // the values, to makes it works for each, add a default wrapper
-                // 'data' outside of Array, that you can use ${{each(index, value) data}}
-                // for this case.
-                // JSON example: [ { name: 1 }, { name: 2} ]
-                if( model.length >= 0 ) {
-                    model = { data : model };
+                
+                // Did we just get the results of our of many data sources?
+                if ( dataid ) {
+                    linkdata.model[dataid] = model;
                 }
-                linkdata.model = model;
-                $.fuzzytoast.process(linkdata);
+                else {   // We just got the only data source...
+                    // JQuery tmpl plugin will iterate all the templates if the json
+                    // in an Array, you can't simply use the each to iterate all
+                    // the values, to makes it works for each, add a default wrapper
+                    // 'data' outside of Array, that you can use ${{each(index, value) data}}
+                    // for this case.
+                    // JSON example: [ { name: 1 }, { name: 2} ]
+                    if( typeof model !== 'object' || model.length >= 0 ) {
+                        model = { data : model };
+                    }
+                    linkdata.model = model;
+                }
+                linkdata.sourceCount--;
+                processDataAndTemplate(linkdata);
             },
             error : function(jqXHR, textStatus, errorThrown) {
                 $.fuzzytoast.errorHandler('model', linkdata, jqXHR, textStatus,
@@ -265,37 +326,42 @@
         });
     };
 
-    $.fuzzytoast.process = function(linkdata) {
-        // The template passed in could be either a string (which
-        // works fine) or an HTML Object.
-		
-		var $destination;
-		if (typeof linkdata.destination === 'string') { //assume it is a selector
-			$destination = $(linkdata.destination);
-		} else{
-			$destination = linkdata.destination; //assume it is a jQuery object
-		} 
-		
-        if ($.fuzzytoast.debug) {
-            console.log("Processing into ", $destination);
-        }
+    // Once each data source and the template has been retrieved (and 
+    // individually processed), we call this function. It doesn't do anything
+    // unless everything was successfully gathered and processed...
+    
+    processDataAndTemplate = function(linkdata) {
+        debug("We are in ", linkdata, "with", linkdata.sourceCount, "and", linkdata.templateData);
+        // Only process once we have the template data and all data sources:
+        if ( linkdata.sourceCount === 0 && linkdata.templateData ) {
+            // The template passed in could be either a string (which
+            // works fine) or an HTML Object.
+            
+            var $destination;
+            if (typeof linkdata.destination === 'string') { //assume it is a selector
+                $destination = $(linkdata.destination);
+            } else{
+                $destination = linkdata.destination; //assume it is a jQuery object
+            } 
+            
+            debug("Processing into", $destination);
+            
+            // Clear out the destination section:
+            if (!linkdata.append) {
+                $destination.empty();
+            }
+            
+            var html = templateRender(linkdata.templateData, linkdata.model);
+            debug( $.fuzzytoast.template.engine, html);
 
-        // Clear out the destination section:
-        if (!linkdata.append) {
-            $destination.empty();
-        }
-
-        var html = templateRender(linkdata.templateData, linkdata.model);
-        if ($.fuzzytoast.debug) {
-            console.log( $.fuzzytoast.template.engine, html);
-        }
-        $destination.append(html);
-        
-        if (linkdata.success) {
-            linkdata.success();
-        }
-        if (linkdata.finished) {
-            linkdata.finished();
+            $destination.append(html);
+            
+            if (linkdata.success) {
+                linkdata.success();
+            }
+            if (linkdata.finished) {
+                linkdata.finished();
+            }
         }
     };
 
@@ -338,7 +404,11 @@
         }
     };
 
-    function templateRender(template_source, model) {
+    /**
+     * Given the data source (the `model` variable), and the template source,
+     * we process everything based on the type of the template engine.
+     */
+    templateRender = function(template_source, model) {
         discoverTemplate();
         
         with ( $.fuzzytoast.template ) {
@@ -363,9 +433,16 @@
                 return template(model);
             }
         }
-    }
+    };
 
-    function discoverTemplate() {
+    /**
+     * Analyze the current JavaScript environment and guess which
+     * template engine we should use.
+     * 
+     * If the template engine has already been setup, calling this function
+     * is a noop.
+     */
+    discoverTemplate = function() {
         if ( ! $.fuzzytoast.template ) {
             // First preference: Handlebars
             if (typeof Handlebars !== 'undefined') {
@@ -384,9 +461,16 @@
             console.log("Template setup: ", $.fuzzytoast.template.engine, "(",
                     $.fuzzytoast.template.type, ")");
         }
-    }
+    };
     
-    function discoverTemplateSetup(type) {
+    /**
+     * Given a single letter key, set up our template processing based
+     * on the template engine we will be using.
+     * 
+     * This is called by `discoverTemplate()` (which picks what is available),
+     * as well as by `setTemplateEngine()` (which allows the user to pick one). 
+     */
+    discoverTemplateSetup = function(type) {
         $.fuzzytoast.template = {};
 
         switch(type.substring(0,1).toLowerCase()) {
@@ -414,7 +498,23 @@
                 $.fuzzytoast.template.processor = $.tmpl;
                 break;
         }
-    }
+    };
+
+    /**
+     * A way to display log messages only if the user tells us too, as in:
+     * 
+     *         $.fuzzytoast.debug = false;
+     */
+    debug = function() {
+        if($.fuzzytoast.debug) {
+            var log = Function.prototype.bind.call(console.log, console);
+            var args = Array.prototype.slice.call(arguments);
+            args.unshift("FuzzyToast:");
+
+            log.apply( this, args );
+        }
+    };
+
 })(jQuery);
 
 /**
