@@ -19,132 +19,62 @@ engine, as in:
     <script type="text/javascript" src="js/libs/jquery.fuzzytoast.js"></script>  
 
   [1]: https://raw.github.com/howardabrams/fuzzytoast/master/web/js/jquery.fuzzytoast.js
-  
+
+Example
+=======
+
 The easiest way to use this plugin is to place a *fuzzytoast* aspect on
 a button or some other object and have it grab an online template, some
 data from a REST call and *insert* it as the child of some element, as
 in:
 
     $('#some-buttom').fuzzytoast ({ 
-        template: 'templates/about.html',
-        data    : 'rest/some-data.json' 
+        template   : 'templates/about.html',
+        data       : 'rest/some-data.json',
+        destination: "#main' 
     });
 
-This call makes many assumptions, but the `fuzzytoast` parameters are
-the following:
+In this case, a `templates/about.html` template is download and processed with
+the data model from calling the server with a URL of `rest/some-data.json`.
+The results are put back into the HTML page based on the jQuery selector 
+given with the `destination` property.
 
-  * `template` - The URL of the template to use
+Pretty easy, eh?
 
-  * `data` - The URL to a REST interface that responds with a data model
-    used to substitute in the template.
+Why?
+====
 
-  * `destination` - The jQuery selector to use when adding the results
-    (as a child element). If not specified, it defaults to
-    `$.fuzzytoast.default_destination` (see below).
+Why did we write it and how does it compare to other, similar projects?
 
-  * `method` - The HTTP method used when retrieving the data. Defaults
-    to `$.fuzzytoast.default_method` (see below).
+The approach of mapping REST documents with a template to display was a pattern
+we were often implementing. Using FuzzyToast makes you web application much 
+simpler to build and maintain.
 
-  * `append` - Should the results be inserted as the only child of the
-    destination (`false`) or *appended* to the end of the existing
-    children (`true`). Defaults to `$.fuzzytoast.default_append` (see
-    below).
+The FuzzyToast plugin works best if you can answer yes to the following:
 
-  * `success` - A function called after the template and data have
-    successfully been inserted into the document. Defaults to
-    `$.fuzzytoast.default_success`.
+  * Is your web app small to medium in terms of size and complexity?
+  * The data from your server is either under your control or is similar 
+    to the data you want to display.
+    
+While this plugin has been used with larger apps, it seems that if your
+web application is quite complex (or your widget behaviors are quite involved), 
+you'll want to craft a solution with Backbone.
 
-  * `error` - A function to call if either the template or data could
-    not be downloaded. Defaults to `$.fuzzytoast.default_error` (see
-    below).
 
-  * `finished` - A function to called after all processing... even if there
-    was an error. Defaults to `$.fuzzytoast.default_finished` (see below).
+Release Notes
+=============
 
-You can also set up defaults for all requests. These defaults include:
+The following is a brief summary of the major releases of this software.
 
-  * `$.fuzzytoast.default_destination` - The jQuery selector that
-    references an HTML element where the results will be place. Defaults
-    to `#main`.
+  * **v4** - Allow data from multiple REST API urls to be combined in a single document.
+  * **v3** - Support for [Mustache][2], [Handlebars][3], [Underscore][4] and other template systems.
+  * **v2** - Support for partial templates, where one template can include other templates.
+  * **v1** - Initial release with a demonstration.
 
-  * `$.fuzzytoast.default_method` - The HTTP method to use when retrieving
-    the data from a web service. Defaults to `GET` (didn’t see that
-    coming, did you?)
+For details on these releases, please see [the FuzzyToast documentation][5].
 
-  * `$.fuzzytoast.default_append` - Should the results of the request be
-    appended to the destination. Defaults to `false`
-
-  * `$.fuzzytoast.default_debug` - Specifies the extra `console.log`ging
-    features of the system. Defaults to `false`.
-
-  * `$.fuzzytoast.default_error` - A function name to be used for all
-    `error` requests.
-
-  * `$.fuzzytoast.default_success` - A function name to be used for all
-    successful requests.
-
-  * `$.fuzzytoast.default_finished` - A function name to be used for all
-    `finished` requests.
-
-Utility Functions
-=================
-
-Templates themselves may contain data that needs to call the fuzzytoast
-system, and in this case, you can build up the dynamic aspects by first
-creating the action, and then calling it, as in:
-
-    var id = $.fuzzytoast.create({
-        template    : 'templates/profile.html',
-        data        : 'data/user/'+$(this).attr('id')+'.json',
-        destination : '#main'
-    });                                                         
-    $.fuzzytoast(id);
-
-Or doing this with a single call to `$.fuzzytoast()` as in:
-
-    $.fuzzytoast({
-        template    : 'templates/profile.html',
-        data        : 'data/user/'+$(this).attr('id')+'.json',
-        destination : '#main'
-    });
-
-A couple of reasons why you would want to use the *utility function*
-form of `$.fuzzytoast()` instead of the initial *selector method* usage
-described above, e.g. `$('#selector').fuzzytoast()`:
-
-First, the `$(this)` is not available without being *inside* a function
-call.
-
-Second, you might want to kick off the call with something other than a
-`click`, as in:
-
-    $('#user-list li').
-        hover(
-            function() {
-                $(this).addClass('ui-state-hover');             
-                $.fuzzytoast({
-                        template    : 'templates/profile.html', 
-                        data        : 'data/user/'+$(this).attr('id')+'.json', 
-                        destination : '#main'                   
-                    });
-            },
-            function() { $(this).removeClass('ui-state-hover'); }   
-        );
-
-We glo
-Depending on your choice of template engine (we support quite a few and you
-can extend FuzzyToast if we don't)
-JQuery tmpl plugin will iterate all the templates if the json in an Array, you
-can't simplely use the each to iterate all the values, to makes it works for each
-, add a default wrapper `data` outside of Array, that you can use
-
-    ${{each(index, value) data}}
-
-for this case.
-
-Example:
-
-    // if we have a json like: [ { name: 1 }, { name: 2} ]
-    {{each(i, obj) data}}
-      <p>{obj.name}</p>
-    {{/each}}
+  [2]: https://github.com/janl/mustache.js
+  [3]: http://handlebarsjs.com/
+  [4]: http://documentcloud.github.com/underscore/#template
+  [5]: templates/instructions.html
+ 
