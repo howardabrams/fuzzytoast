@@ -1,8 +1,9 @@
 <div id="users">
    <div id="side">
       <ul id="user-list">
-         {{each(id,user) users}}
-         <li id="${user.id}">${user.name}</li> {{/each}}
+         {{#users}}
+         <li id="{{id}}">{{name}}</li> 
+         {{/users}}
       </ul>
    </div>
    <div class="note">

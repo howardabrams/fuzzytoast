@@ -15,11 +15,11 @@
          <th>Phone</th>
          <th>Location</th>
       </tr>
-      {{each(id,user) users}}
-      <tr id="${user.id}">
-         <td class="name">${user.name}</td>
+      {{#users}}
+      <tr id="{{id}}">
+         <td class="name">{{name}}</td>
       </tr>
-      {{/each}}
+      {{/users}}
    </table>
 
    <!-- Not sure I'm crazy about putting scripts in a template... -->
