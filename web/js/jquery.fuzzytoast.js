@@ -362,6 +362,15 @@
             if (linkdata.finished) {
                 linkdata.finished();
             }
+            
+            // If the link contains a "refresh" tag, we will reget the 
+            // data sources and process things again, without bothering
+            // to get the template.
+            if (linkdata.refresh) {
+                setTimeout( function(){
+                    getDataSources(linkdata);
+                }, linkdata.refresh);
+            }
         }
     };
 

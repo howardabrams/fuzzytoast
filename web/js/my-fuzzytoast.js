@@ -82,7 +82,15 @@ $(function() {
     $('#table_link').fuzzytoast('table-link');
 
     // ------------------
-    //   OFFLINE
+    //   TWITTER
+    // ------------------
+    
+    $('#twitter_link').click ( function() {
+        $('#main').load ('templates/twitter.html');
+    });
+
+    // ------------------
+    //   ERROR
     // ------------------
 
     $('#error_link').fuzzytoast ({

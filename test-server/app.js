@@ -27,6 +27,7 @@ app.configure(function(){
 
 app.get('/', redirectWeb);
 app.get('/test', redirectTest);
+app.get('/twitter', require('./twitter').retrieve );
 
 
 app.listen(port);

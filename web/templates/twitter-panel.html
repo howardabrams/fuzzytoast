@@ -1,0 +1,17 @@
+{{#data}}
+<div class="tweet">
+  <table>
+    <tr>
+      <td class="tweet-img" rowspan="2">
+        <img src="{{user.profile_image_url}}" />
+      </td>
+      <th>
+        <a href="http://twitter.com/#!/{{user.screen_name}}" target="_new">{{user.name}}</a>
+      </th>
+      <td align="right">{{user.location}}</td>
+    </tr>
+    <tr>
+      <td colspan="2"><span class="tweet-text">{{text}}</span></td>
+  </table>
+</div>
+{{/data}}

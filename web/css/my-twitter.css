@@ -1,0 +1,28 @@
+#twitter-comments {
+  width: 45%;
+  float: left;
+}
+#twitter-panel {
+  width: 52%;
+  float: right;
+}
+
+.tweet {
+  clear: both;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #aaa;
+  margin-bottom: 6px;
+}
+
+.tweet table {
+  width: 100%;
+  font-size: 13px;
+}
+
+.tweet th {
+  text-align: left;
+}
+
+.tweet-img {
+  width: 50px;
+}
