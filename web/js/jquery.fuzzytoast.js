@@ -337,27 +337,27 @@
             // The template passed in could be either a string (which
             // works fine) or an HTML Object.
             
-            var $destination;
+            var destination;
             if (typeof linkdata.destination === 'string') { //assume it is a selector
-                $destination = $(linkdata.destination);
+                destination = $(linkdata.destination);
             } else{
-                $destination = linkdata.destination; //assume it is a jQuery object
+                destination = linkdata.destination; //assume it is a jQuery object
             } 
             
-            debug("Processing into", $destination);
+            debug("Processing into", destination);
             
             // Clear out the destination section:
             if (!linkdata.append) {
-                $destination.empty();
+                destination.empty();
             }
             
             var html = templateRender(linkdata.templateData, linkdata.model);
             debug( $.fuzzytoast.template.engine, html);
 
-            $destination.append(html);
+            destination.append(html);
             
             if (linkdata.success) {
-                linkdata.success();
+                linkdata.success(destination, linkdata.model);
             }
             if (linkdata.finished) {
                 linkdata.finished();
