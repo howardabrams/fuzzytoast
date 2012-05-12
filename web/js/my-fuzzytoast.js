@@ -49,7 +49,7 @@ $(function() {
     //   use the `.load()` method:
 
     $('#landing_link').click ( function() {
-        $('#main').load ('templates/instructions.html');
+        $('#main').loadWithCache ('templates/instructions.html');
     });
 
     // -----------------
@@ -86,7 +86,7 @@ $(function() {
     // ------------------
     
     $('#twitter_link').click ( function() {
-        $('#main').load ('templates/twitter.html');
+        $('#main').loadWithCache ('templates/twitter.html');
     });
 
     // ------------------
@@ -104,12 +104,12 @@ $(function() {
     // ------------------
 
     $('#files_link').click ( function() {
-        $('#main').load ('templates/files.html').error(access_error);
+        $('#main').loadWithCache ('templates/files.html').error(access_error);
     });
 
     // ------------------
     //   INITIAL LOAD
     // ------------------
 
-    $('#main').load ('templates/startup.html');
+    $('#main').loadWithCache ('templates/startup.html');
 });

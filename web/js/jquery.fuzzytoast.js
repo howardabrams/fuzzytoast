@@ -196,6 +196,7 @@
     // Sure, this regular expression could be overwritten:
     $.fuzzytoast.templateIncludes = /\{\{\s*INCLUDE\s+(\S+)\s*\}\}/m;
 
+    
     // -------------------------------------------------------------
     // Following functions are not intended to be called directly.
     // -------------------------------------------------------------
@@ -576,3 +577,48 @@ $.fn.fuzzytoast = function(options) {
         console.log("The 'fuzzytoast' method requires both a 'data' and 'template' option.");
     }
 };
+
+
+$.fuzzytoast.loadcache = {};
+
+/**
+ * Similar in behavior to the standard jQuery `.load()` function. The difference
+ * is that if some HTML has been loaded before, it won't be re=downloaded from
+ * the server, but instead will come out of an in-memory cache.
+ * 
+ * This function is useful for static HTML files that you know won't change
+ * very often.
+ * 
+ * The differences with the *second load* include:
+ * 
+ *   - The `data` value (if any) is ignored.
+ *   - The callback is only given the data, not a `textStatus` or the `XMLHttpRequest` object
+ * 
+ * **Note:** The cache is cleared when the browser page is refreshed.
+ * 
+ * @see http://api.jquery.com/load/
+ */
+$.fn.loadWithCache = function(url, data, callback)
+{
+    if (typeof data === 'function') {
+        callback = data;
+        data = null;
+    }
+    
+    if (htmlcache[url]) {
+        this.html( $.fuzzytoast.loadcache[url] );
+        if (callback) {
+            callback($.fuzzytoast.loadcache[url]);
+      }
+    }
+    else {
+      this.load(url, data, function( text, status, jx ) {
+          $.fuzzytoast.loadcache[url] = text;
+          if (callback) {
+                callback(text, status, jx);
+          }
+      });
+    }
+    
+    return this;
+ };
