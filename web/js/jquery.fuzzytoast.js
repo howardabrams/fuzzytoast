@@ -50,7 +50,9 @@
             destination : $.fuzzytoast.default_destination,
             method      : $.fuzzytoast.default_method,
             append      : $.fuzzytoast.default_append,
+            before      : $.fuzzytoast.default_before,
             finished    : $.fuzzytoast.default_finished,
+            complete    : $.fuzzytoast.default_complete,
             success     : $.fuzzytoast.default_success,
             parameters  : parameters
         }, $.fuzzytoast.linkdata[id]);
@@ -380,8 +382,11 @@
             if (linkdata.success) {
                 linkdata.success(destination, linkdata.model);
             }
-            if (linkdata.finished) {
-                linkdata.finished();
+            if (linkdata.finished) {   // NOTE: This approach is obsolete and will
+                linkdata.finished();   //       be removed in version 2.0
+            }
+            if (linkdata.complete) {
+                linkdata.complete();
             }
             
             // If the link contains a "refresh" tag, we will reget the 
@@ -429,8 +434,11 @@
             linkdata.error(errorDetails);
         }
         
-        if (linkdata.finished) {
-            linkdata.finished();
+        if (linkdata.finished) {   // NOTE: This approach is obsolete and will
+            linkdata.finished();   //       be removed in version 2.0
+        }
+        if (linkdata.complete) {
+            linkdata.complete();
         }
     };
 
