@@ -67,6 +67,7 @@ Release Notes
 The following is a brief summary of the major releases of this software.
 Keep in mind that we release regularly with only one or two changes per release.
 
+  * **v1.1.4** - Added a `refresh` option to FT calls to automatically redownload the data and re-render the template.
   * **v1.1.3** - Added a `.loadWithCache()` function to be a more efficient replacement for jQuery's `.load()` function. 
   * **v1.1.2** - Allow data from multiple REST API urls to be combined in a single document.
   * **v1.1.1** - Support for [Mustache][2], [Handlebars][3], [Underscore][4] and other template systems.
