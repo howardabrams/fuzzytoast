@@ -7,18 +7,15 @@
     up-to-date without any changes to your backend API.</p>
   <pre><code>$.fuzzytoast({
     destination: '#twitter-panel',
-    data: '/twitter',
+    data: '/cgi-bin/twitter.cgi',
     template: 'twitter-panel.html',
     refresh: 10000
 });</code></pre>
   <p>
-    Hrm... now I know why no one displays the public feed
-    for demo purposes.
-  </p>
-  <p>
-    <B>Note:</B> Looks like this public feed, 
-    <a href="https://dev.twitter.com/blog/api-housekeeping">soon won't be available</a>.
-    Guess I'll fix it then...
+    <b>Note:</b> I realize that this is obvious, but keep in mind that
+  your JavaScript calls can not go directly to
+  <code>http://api.twitter.com</code>, but can only access the host
+  (and port) from whence they came.
   </p>
 </div>
 <div id="twitter-panel"></div>

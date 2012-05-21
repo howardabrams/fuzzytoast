@@ -209,6 +209,7 @@
     // Sure, this regular expression could be overwritten:
     $.fuzzytoast.templateIncludes = /\{\{\s*INCLUDE\s+(\S+)\s*\}\}/m;
 
+    
     // -------------------------------------------------------------
     // Following functions are not intended to be called directly.
     // -------------------------------------------------------------
