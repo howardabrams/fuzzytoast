@@ -46,7 +46,7 @@
         // will override default values set elsewhere.
 
         var linkdata = $.extend({
-            id : id,
+            id          : id,
             destination : $.fuzzytoast.default_destination,
             method      : $.fuzzytoast.default_method,
             append      : $.fuzzytoast.default_append,
@@ -57,6 +57,18 @@
 
         debug("Starting fuzzytoast request", id);
 
+        // If the `before` parameter is set to a function, we call it, giving
+        // it the destination. This allows people to put a spinner in the
+        // destination area. If, this returns a function, we'll pass that 
+        // function to jQuery's $.ajax() as a `beforeSend` callback.
+        
+        if ( linkdata.before && typeof linkdata.before === 'function' ) {
+            var beforeSend = linkdata.before(linkdata.destination, linkdata);
+            if (beforeSend) {
+                linkdata.beforeSend = beforeSend;
+            }
+        }
+        
         // Start work on gathering up the data sources
         // while we start work on the getting the template.
         linkdata.sourceCount = -1;
@@ -74,6 +86,7 @@
                 $.ajax({
                     url : linkdata.template,
                     dataType : 'text',
+                    beforeSend : linkdata.beforeSend ? linkdata.beforeSend : null,
                     success : function(templateData) {
                         debug("Retrieved '", + id + "' template:", $.fuzzytoast.linkdata[id].template);
                         // debug(templateData);
@@ -212,6 +225,7 @@
             debug("Retrieving sub-template:", match[1]);
             $.ajax({
                 url : match[1],
+                beforeSend : linkdata.beforeSend ? linkdata.beforeSend : null,
                 success : function( templateString ) {
                     var newTemplate = 
                         templateData.substring(0, match.index) +
@@ -286,10 +300,11 @@
             url : src,
             type : linkdata.method,
             dataType : 'text',
+            beforeSend : linkdata.beforeSend ? linkdata.beforeSend : null,
             data : linkdata.parameters,
             success : function(data, textStatus, jqXHR) {
                 debug("Retrieved data: ", data);
-
+		try {
                 // Safari is stupid and can't seem to parse anything, so
                 // we use this clever approach stolen from jQuery's source.
                 var model;
@@ -299,7 +314,12 @@
                 else {
                     model = $.parseJSON(data);
                 }
-                
+                }
+		catch (err) {
+		    console.log("Could not parse data from ", src, " - ", err);
+		    return;
+		}
+
                 // Did we just get the results of our of many data sources?
                 if ( dataid ) {
                     linkdata.model[dataid] = model;
@@ -337,27 +357,27 @@
             // The template passed in could be either a string (which
             // works fine) or an HTML Object.
             
-            var $destination;
+            var destination;
             if (typeof linkdata.destination === 'string') { //assume it is a selector
-                $destination = $(linkdata.destination);
+                destination = $(linkdata.destination);
             } else{
-                $destination = linkdata.destination; //assume it is a jQuery object
+                destination = linkdata.destination; //assume it is a jQuery object
             } 
             
-            debug("Processing into", $destination);
+            debug("Processing into", destination);
             
             // Clear out the destination section:
             if (!linkdata.append) {
-                $destination.empty();
+                destination.empty();
             }
             
             var html = templateRender(linkdata.templateData, linkdata.model);
             debug( $.fuzzytoast.template.engine, html);
 
-            $destination.append(html);
+            destination.append(html);
             
             if (linkdata.success) {
-                linkdata.success();
+                linkdata.success(destination, linkdata.model);
             }
             if (linkdata.finished) {
                 linkdata.finished();
@@ -576,3 +596,48 @@ $.fn.fuzzytoast = function(options) {
         console.log("The 'fuzzytoast' method requires both a 'data' and 'template' option.");
     }
 };
+
+
+$.fuzzytoast.loadcache = {};
+
+/**
+ * Similar in behavior to the standard jQuery `.load()` function. The difference
+ * is that if some HTML has been loaded before, it won't be re=downloaded from
+ * the server, but instead will come out of an in-memory cache.
+ * 
+ * This function is useful for static HTML files that you know won't change
+ * very often.
+ * 
+ * The differences with the *second load* include:
+ * 
+ *   - The `data` value (if any) is ignored.
+ *   - The callback is only given the data, not a `textStatus` or the `XMLHttpRequest` object
+ * 
+ * **Note:** The cache is cleared when the browser page is refreshed.
+ * 
+ * @see http://api.jquery.com/load/
+ */
+$.fn.loadWithCache = function(url, data, callback)
+{
+    if (typeof data === 'function') {
+        callback = data;
+        data = null;
+    }
+    
+    if ( $.fuzzytoast.loadcache[url] ) {
+        this.html( $.fuzzytoast.loadcache[url] );
+        if (callback) {
+            callback($.fuzzytoast.loadcache[url]);
+      }
+    }
+    else {
+      this.load(url, data, function( text, status, jx ) {
+          $.fuzzytoast.loadcache[url] = text;
+          if (callback) {
+                callback(text, status, jx);
+          }
+      });
+    }
+    
+    return this;
+ };

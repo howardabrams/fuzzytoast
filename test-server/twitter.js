@@ -6,7 +6,8 @@ var twitterClient = http.createClient(80, "api.twitter.com");
 var options = {
     host : 'api.twitter.com',
     port : 80,
-    path : '/1/statuses/public_timeline.json'
+    // path : '/1/statuses/public_timeline.json'
+    path : '/1/lists/statuses.json?owner_screen_name=howardabrams&slug=humor'
 };
 
 function getTweets(cb) {

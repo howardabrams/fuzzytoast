@@ -5,7 +5,7 @@
 
 var path = require('path');
 var express = require('express');
-var port    = 3000;
+var port    = 5000;
 
 var app = module.exports = express.createServer();
 
@@ -27,8 +27,7 @@ app.configure(function(){
 
 app.get('/', redirectWeb);
 app.get('/test', redirectTest);
-app.get('/twitter', require('./twitter').retrieve );
-
+app.get('/cgi-bin/twitter.cgi', require('./twitter').retrieve );
 
 app.listen(port);
 console.log("FuzzyToast hosting server listening on port %d", port);

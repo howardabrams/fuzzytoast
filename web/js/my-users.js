@@ -25,6 +25,7 @@ $('#user-list li').
     	$.fuzzytoast({
     		template    : 'templates/profile.html',
     		data        : 'data/user/'+$(this).attr('id')+'.json',
-    		destination : '#right'
+    		destination : '#right',
+            before      : insertSpinner
     	});
     });

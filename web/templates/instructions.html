@@ -71,7 +71,7 @@
          </p>
       </li>
       <li><p>
-            <code>finished</code>
+            <code>success</code>
             - A callback function called after the template and data have been
             successfully inserted into the document. Defaults to
             <code>$.fuzzytoast.default_success</code>
@@ -91,6 +91,25 @@
             - A function called after either the <code>success</code> or
             <code>error</code> callbacks. Defaults to
             <code>$.fuzzytoast.default_finished</code>
+         </p>
+      </li>
+      <li><p>
+            <code>before</code>
+            - A callback function called before the requests for the template
+            and data have been made. It is passed the <code>destination</code>,
+            which allows a spinner to be inserted while the data is being
+            acquired.
+            <br/><br/>
+            If this function returns a function, that is passed to all 
+            <code>$.ajax()</code> calls as a <code>beforeSend</code>
+            parameter.
+         </p>
+      </li>
+      <li><p>
+            <code>beforeSend</code>
+            - A function called by <code>$.ajax()</code> before each AJAX
+            request. See the <a href="http://api.jquery.com/jQuery.ajax/">AJAX documentation</a>
+            for details.
          </p>
       </li>
    </ul>
@@ -443,6 +462,41 @@ Books read:
    <p>Now we can associate the error handler with all errors, with:
    </p>
    <pre><code>$.fuzzytoast.default_error = access_error;</code></pre>
+   
+   
+   <h2><code>loadWithCache()</code></h2>
+   <p>
+     jQuery has a nice function, 
+     <a href="http://api.jquery.com/load/"><code>.load()</code></a> which
+     loads some static HTML data and inserts in the page. The problem is if
+     you do this process again, it re-downloads it.
+   </p>
+   <p>
+     We've extended jQuery with a <code>.loadWithCache()</code> function that
+     acts just like <code>.load()</code> the first time it is executed.
+     If it is called again, it just pulls the results from an in-memory
+     cache, and doesn't bother hitting the server.
+   </p>
+   <p>
+    This function is useful for static HTML files that you know won't change
+    very often.
+   </p>
+   <p>
+    The behavioral differences between the first and *second load* include:
+   </p>
+   <ul>
+     <li>
+        The <code>data</code> value (if any) is ignored.
+     </li>
+     <li>
+        The callback is only given the data, not a <code>textStatus</code> or 
+        the <code>XMLHttpRequest</code> object.
+     </li>
+   </ul>
+   <p>
+     <b>Note:</b> The cache is cleared when the browser page is refreshed.
+   </p>
+    
 </div>
 <script type="text/javascript">
 $(function(){
