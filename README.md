@@ -67,6 +67,8 @@ Release Notes
 The following is a brief summary of the major releases of this software.
 Keep in mind that we release regularly with only one or two changes per release.
 
+  * **v1.2.0** - Deprecated the `finished` callback in favor of `complete`. (Both work at this point).
+  * **v1.1.5** - Added a `before` callback function called before an FT request for spinners and whatnot.
   * **v1.1.4** - Added a `refresh` option to FT calls to automatically redownload the data and re-render the template.
   * **v1.1.3** - Added a `.loadWithCache()` function to be a more efficient replacement for jQuery's `.load()` function. 
   * **v1.1.2** - Allow data from multiple REST API urls to be combined in a single document.
@@ -75,24 +77,3 @@ Keep in mind that we release regularly with only one or two changes per release.
   * **v1.0.0** - Initial release with a demonstration.
 
 For details on these releases, please see [the FuzzyToast documentation][5].
-
-Tasks to Do
-===========
-
-This plugin has been used in a few projects, and is now considered stable and
-usable. We are working on the adding following features for the next release:
-
-  * Add some sort of a `pre` feature that runs a function at the start 
-    of a fuzzytoast. An inline spinner or status feature comes to mind.
-  * Get the Twitter demonstration working on the `fuzzytoast.com` server.
-
-We would like to make some changes that include some incompatible
-issues for our **Version 2** release:
-  
-  * Change `finished` to `complete` in order to be similar to jQuery's `$.ajax` function.
-
-  [2]: https://github.com/janl/mustache.js
-  [3]: http://handlebarsjs.com/
-  [4]: http://documentcloud.github.com/underscore/#template
-  [5]: templates/instructions.html
- 
