@@ -87,10 +87,10 @@
          </p>
       </li>
       <li><p>
-            <code>finished</code>
+            <code>complete</code>
             - A function called after either the <code>success</code> or
             <code>error</code> callbacks. Defaults to
-            <code>$.fuzzytoast.default_finished</code>
+            <code>$.fuzzytoast.default_complete</code>
          </p>
       </li>
       <li><p>
@@ -98,7 +98,8 @@
             - A callback function called before the requests for the template
             and data have been made. It is passed the <code>destination</code>,
             which allows a spinner to be inserted while the data is being
-            acquired.
+            acquired. Defaults to
+            <code>$.fuzzytoast.default_before</code>
             <br/><br/>
             If this function returns a function, that is passed to all 
             <code>$.ajax()</code> calls as a <code>beforeSend</code>
@@ -155,10 +156,10 @@
          </p></li>
       <li>
          <p>
-            <code>$.fuzzytoast.default_finished</code>
+            <code>$.fuzzytoast.default_complete</code>
             - A function name to be used for all
-            <code>finished</code>
-            requests.
+            <code>complete</code>d requests. Called after
+	    any <code>success</code> or <code>error</code> calls.
          </p></li>
       <li>
          <p>
